@@ -175,6 +175,23 @@
       border-color: var(--accent);
     }
 
+    .field textarea {
+      width: 100%;
+      min-height: 88px;
+      resize: vertical;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font: inherit;
+    }
+
+    .field textarea:focus {
+      outline: 2px solid rgba(116,208,255,0.35);
+      border-color: var(--accent);
+    }
+
     .field-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -312,6 +329,11 @@
           </div>
 
           <div class="field">
+            <label for="commentInput">Comment</label>
+            <textarea id="commentInput" maxlength="500" placeholder="Add a note about this sighting"></textarea>
+          </div>
+
+          <div class="field">
             <span>Date and time of sighting</span>
             <div class="field-row">
               <input id="sightingDate" type="date" />
@@ -396,6 +418,7 @@
         logoutBtn: document.getElementById('logoutBtn'),
         registrationInput: document.getElementById('registrationInput'),
         operatorInput: document.getElementById('operatorInput'),
+        commentInput: document.getElementById('commentInput'),
         sightingDate: document.getElementById('sightingDate'),
         sightingTime: document.getElementById('sightingTime'),
         searchResults: document.getElementById('searchResults'),
@@ -587,6 +610,7 @@
               <div>
                 <strong>${escapeHtml(entry.registration)}</strong>
                 <small>${escapeHtml([entry.callsign, entry.operator, entry.aircraftType].filter(Boolean).join(' · ') || 'Unknown aircraft')}</small>
+                ${entry.comment ? `<small class="entry-comment">${escapeHtml(entry.comment)}</small>` : ''}
               </div>
               <div class="entry-meta">
                 <span>${escapeHtml(formatted)}</span>
@@ -767,6 +791,7 @@
       async function handleSaveEntry() {
         const registration = normalizeRegistration(elements.registrationInput.value);
         const operator = (elements.operatorInput.value || '').trim();
+        const comment = (elements.commentInput.value || '').trim();
         const date = elements.sightingDate.value;
         const time = elements.sightingTime.value;
 
@@ -799,6 +824,7 @@
           operator: finalOperator,
           callsign: match?.callsign || (match?.airline === 'Air Europa' ? 'AEA' : match?.airline === 'Iberia' ? 'IBE' : ''),
           aircraftType: match?.type || '',
+          comment,
           date: date || new Date().toISOString().slice(0, 10),
           time: time || '00:00',
           loggedAt: new Date().toISOString()
@@ -810,6 +836,7 @@
 
         elements.registrationInput.value = '';
         elements.operatorInput.value = '';
+        elements.commentInput.value = '';
         seedDateTime();
         elements.searchResults.innerHTML = '';
         setStatus(match ? `Saved log for ${registration}.` : `Saved manual log for ${registration}. The registration was not found in the available registries.`);
