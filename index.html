@@ -18,6 +18,8 @@
     nav { display: flex; gap: 7px; align-items: center; }
     nav a { color: var(--muted); border-radius: 999px; padding: 9px 14px; text-decoration: none; font-size: .92rem; transition: color .2s, background .2s; }
     nav a:hover, nav a:focus-visible { color: var(--ink); background: rgba(255,255,255,.1); outline: 0; }
+    nav button { border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; color: var(--muted); background: transparent; font: inherit; font-size: .92rem; cursor: pointer; }
+    nav button:hover, nav button:focus-visible { color: var(--ink); background: rgba(255,255,255,.1); outline: 0; }
     main { min-height: calc(100vh - 89px); display: grid; place-items: center; padding: 54px 0 80px; }
     .hero { width: 100%; max-width: 850px; }
     .eyebrow { margin: 0 0 20px; color: var(--accent); font-size: .82rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
@@ -33,8 +35,36 @@
     .feature small { display: block; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
     .feature strong { font-size: 1.15rem; }
     .arrow { font-size: 1.6rem; color: var(--accent); }
+
+    .logger-panel { margin-top: 44px; padding: 24px; border: 1px solid var(--line); border-radius: 24px; background: rgba(12, 16, 30, 0.74); box-shadow: 0 14px 40px rgba(0,0,0,.25); }
+    .logger-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+    .logger-header h2 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -.05em; }
+    .user-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+    .logger-auth, .logger-app { display: grid; gap: 18px; }
+    .logger-card { padding: 22px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.02); }
+    .logger-form { display: grid; gap: 16px; }
+    .field { display: grid; gap: 8px; }
+    .field label, .field span { color: var(--muted); font-size: .9rem; font-weight: 600; }
+    .field input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(15,20,32,.9); color: var(--ink); font: inherit; }
+    .field input:focus { outline: 2px solid rgba(255,207,90,.44); border-color: rgba(255,207,90,.7); }
+    .search-results { display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; margin-top: 8px; }
+    .search-pill { border: 1px solid rgba(255,207,90,.55); color: var(--ink); background: rgba(255,207,90,.12); border-radius: 999px; padding: 7px 12px; font-size: .84rem; cursor: pointer; }
+    .search-pill:hover, .search-pill:focus-visible { background: rgba(255,207,90,.2); outline: none; }
+    .meta-note { color: var(--muted); font-size: .82rem; }
+    .logger-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .button.secondary { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
+    .status-message { min-height: 1.2em; color: var(--accent); font-size: .92rem; }
+    .status-message.error { color: #ff9a9a; }
+    .entries-panel { margin-top: 20px; }
+    .entries-panel h3 { margin: 0 0 16px; font-size: 1.2rem; }
+    .entry-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .entry-item { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }
+    .entry-item strong { display: block; font-size: 1.05rem; }
+    .entry-item span { color: var(--muted); display: block; margin-top: 4px; }
+    .entry-meta { display: grid; gap: 4px; text-align: right; color: var(--muted); font-size: .82rem; }
+    .empty-state { padding: 16px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); }
     footer { padding: 0 0 28px; color: #7e879d; font-size: .88rem; }
-    @media (max-width: 520px) { .shell { width: min(100% - 28px, 1120px); } header { padding: 18px 0; } nav a { padding: 8px 10px; } main { padding-top: 36px; } .feature { margin-top: 50px; padding: 19px; } }
+    @media (max-width: 520px) { .shell { width: min(100% - 28px, 1120px); } header { padding: 18px 0; } nav a { padding: 8px 10px; } main { padding-top: 36px; } .feature { margin-top: 50px; padding: 19px; } .logger-panel { padding: 18px; } .entry-item { display: grid; } .entry-meta { text-align: left; } }
   </style>
 </head>
 <body>
@@ -44,6 +74,7 @@
       <nav aria-label="Main navigation">
         <a href="index.html" aria-current="page">Home</a>
         <a href="eclipse.html">Eclipse</a>
+        <button id="homeLogoutBtn" type="button">Log out</button>
       </nav>
     </header>
     <main>
@@ -53,15 +84,283 @@
         <p class="intro">A small corner of the web for projects, experiments, and things worth sharing.</p>
         <div class="links">
           <a class="button primary" href="eclipse.html">Explore the eclipse <span aria-hidden="true">→</span></a>
-          <a class="button" href="#featured">Featured project <span aria-hidden="true">↓</span></a>
+          <a class="button" href="airplane.html">Featured project <span aria-hidden="true">↓</span></a>
         </div>
-        <a class="feature" id="featured" href="eclipse.html">
-          <span><small>Featured project</small><strong>Perillo Eclipse 2026 — live countdown</strong></span>
+        <a class="feature" id="featured" href="airplane.html">
+          <span><small>Featured project</small><strong>Airplane Logger</strong></span>
           <span class="arrow" aria-hidden="true">↗</span>
         </a>
       </section>
     </main>
     <footer>© 2026 Bernat Pedro</footer>
   </div>
+
+  <script>
+    (() => {
+      const aircraftDatabase = [
+        { registration: 'N123AA', airline: 'American Airlines', owner: 'American Airlines' },
+        { registration: 'N456UA', airline: 'United Airlines', owner: 'United Airlines' },
+        { registration: 'G-EZTH', airline: 'EasyJet', owner: 'EasyJet UK' },
+        { registration: 'EC-LTV', airline: 'Iberia', owner: 'Iberia' },
+        { registration: 'D-AIJK', airline: 'Lufthansa', owner: 'Lufthansa' },
+        { registration: '9H-ABC', airline: 'Malta Air', owner: 'Aviation Holdings' },
+        { registration: 'VP-CBA', airline: 'British Airways', owner: 'International Airlines Group' },
+        { registration: 'A7-AHQ', airline: 'Qatar Airways', owner: 'Qatar Airways' },
+        { registration: 'HB-JAN', airline: 'Swiss International Air Lines', owner: 'Swiss' },
+        { registration: 'F-GRNE', airline: 'Air France', owner: 'Air France' },
+        { registration: 'OE-LDM', airline: 'Austrian Airlines', owner: 'Austrian Airlines' },
+        { registration: 'PH-BGA', airline: 'KLM', owner: 'KLM Royal Dutch Airlines' },
+        { registration: 'B-1234', airline: 'China Southern Airlines', owner: 'China Southern Airlines' },
+        { registration: 'CN-RNB', airline: 'Royal Air Maroc', owner: 'Royal Air Maroc' },
+        { registration: 'VH-OQA', airline: 'Qantas', owner: 'Qantas Airways' },
+        { registration: 'OO-JDG', airline: 'Brussels Airlines', owner: 'Lufthansa Group' },
+        { registration: 'XA-XYZ', airline: 'Aeromexico', owner: 'Aeromexico' }
+      ];
+
+      const STORAGE_KEYS = {
+        user: 'airplane-logger-user',
+        entries: 'airplane-logger-entries'
+      };
+
+      const elements = {
+        loginView: document.getElementById('loginView'),
+        appView: document.getElementById('appView'),
+        loginForm: document.getElementById('loginForm'),
+        usernameInput: document.getElementById('usernameInput'),
+        userBadge: document.getElementById('userBadge'),
+        currentUserLabel: document.getElementById('currentUserLabel'),
+        registrationInput: document.getElementById('registrationInput'),
+        operatorInput: document.getElementById('operatorInput'),
+        sightingDate: document.getElementById('sightingDate'),
+        sightingTime: document.getElementById('sightingTime'),
+        searchResults: document.getElementById('searchResults'),
+        entriesList: document.getElementById('entriesList'),
+        saveEntryBtn: document.getElementById('saveEntryBtn'),
+        logoutBtn: document.getElementById('logoutBtn'),
+        statusMessage: document.getElementById('statusMessage')
+      };
+
+      if (!elements.loginForm) return;
+
+      let currentUser = localStorage.getItem(STORAGE_KEYS.user) || '';
+      let entries = readEntries();
+
+      function readEntries() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEYS.entries);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function persistEntries() {
+        localStorage.setItem(STORAGE_KEYS.entries, JSON.stringify(entries));
+      }
+
+      function setStatus(message, isError = false) {
+        elements.statusMessage.textContent = message;
+        elements.statusMessage.classList.toggle('error', isError);
+      }
+
+      function isValidGmailAddress(value) {
+        return /^[a-zA-Z0-9._%+\-]+@gmail\.com$/i.test(String(value || '').trim());
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/\"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function normalizeRegistration(input) {
+        return String(input || '').toUpperCase().replace(/[^A-Z0-9-]/g, '');
+      }
+
+      function seedDateTime() {
+        const now = new Date();
+        elements.sightingDate.value = now.toISOString().slice(0, 10);
+        elements.sightingTime.value = now.toTimeString().slice(0, 5);
+      }
+
+      function renderEntries() {
+        if (!entries.length) {
+          elements.entriesList.innerHTML = '<li class="empty-state">No sightings logged yet. Your first airplane log will appear here.</li>';
+          return;
+        }
+
+        const sortedEntries = [...entries].sort((a, b) => new Date(b.loggedAt) - new Date(a.loggedAt));
+
+        elements.entriesList.innerHTML = sortedEntries.map((entry) => {
+          const dateTime = new Date(`${entry.date}T${entry.time || '00:00'}`);
+          const formattedDate = Number.isNaN(dateTime.getTime()) ? entry.date : dateTime.toLocaleString([], {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+          });
+
+          return `
+            <li class="entry-item">
+              <div>
+                <strong>${escapeHtml(entry.registration)}</strong>
+                <span>${escapeHtml(entry.operator || 'Unknown operator')}</span>
+              </div>
+              <div class="entry-meta">
+                <span>${escapeHtml(entry.user)}</span>
+                <span>${escapeHtml(formattedDate)}</span>
+              </div>
+            </li>
+          `;
+        }).join('');
+      }
+
+      function filterAircraft(query) {
+        const value = String(query || '').trim().toLowerCase();
+        if (!value) return [];
+
+        return aircraftDatabase.filter((plane) => {
+          return plane.registration.toLowerCase().includes(value)
+            || plane.airline.toLowerCase().includes(value)
+            || plane.owner.toLowerCase().includes(value);
+        }).slice(0, 6);
+      }
+
+      function updateSearchResults() {
+        const query = normalizeRegistration(elements.registrationInput.value);
+        const results = filterAircraft(query);
+
+        if (!query) {
+          elements.searchResults.innerHTML = '';
+          return;
+        }
+
+        if (!results.length) {
+          elements.searchResults.innerHTML = '<span class="meta-note">No exact match yet — you can still log the registration manually.</span>';
+          return;
+        }
+
+        elements.searchResults.innerHTML = results.map((plane) => {
+          const label = plane.airline || plane.owner || 'Unknown operator';
+          return `<button type="button" class="search-pill" data-registration="${escapeHtml(plane.registration)}" data-operator="${escapeHtml(label)}">${escapeHtml(plane.registration)} · ${escapeHtml(label)}</button>`;
+        }).join('');
+      }
+
+      function showApp() {
+        elements.loginView.hidden = true;
+        elements.appView.hidden = false;
+        elements.userBadge.hidden = false;
+        elements.currentUserLabel.textContent = currentUser;
+        setStatus('');
+        renderEntries();
+      }
+
+      function showLogin() {
+        elements.loginView.hidden = false;
+        elements.appView.hidden = true;
+        elements.userBadge.hidden = true;
+        setStatus('');
+      }
+
+      function handleLogin(event) {
+        event.preventDefault();
+        const username = String(elements.usernameInput.value).trim();
+
+        if (!isValidGmailAddress(username)) {
+          setStatus('Please enter a valid Gmail address ending in @gmail.com.', true);
+          elements.usernameInput.focus();
+          return;
+        }
+
+        currentUser = username.toLowerCase();
+        localStorage.setItem(STORAGE_KEYS.user, currentUser);
+        elements.usernameInput.value = '';
+        showApp();
+      }
+
+      function handleLogout() {
+        currentUser = '';
+        localStorage.removeItem(STORAGE_KEYS.user);
+        showLogin();
+      }
+
+      function handleSaveEntry() {
+        const registration = normalizeRegistration(elements.registrationInput.value);
+        const operator = elements.operatorInput.value.trim();
+        const date = elements.sightingDate.value;
+        const time = elements.sightingTime.value;
+
+        if (!registration) {
+          setStatus('Please enter an aircraft registration number first.', true);
+          elements.registrationInput.focus();
+          return;
+        }
+
+        const matchingPlane = aircraftDatabase.find((plane) => plane.registration.toUpperCase() === registration);
+        const finalOperator = operator || (matchingPlane ? (matchingPlane.airline || matchingPlane.owner) : 'Unknown operator');
+
+        const entry = {
+          id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          user: currentUser,
+          registration,
+          operator: finalOperator,
+          date: date || new Date().toISOString().slice(0, 10),
+          time: time || '00:00',
+          loggedAt: new Date().toISOString()
+        };
+
+        entries.unshift(entry);
+        persistEntries();
+        renderEntries();
+
+        elements.registrationInput.value = '';
+        elements.operatorInput.value = '';
+        seedDateTime();
+        elements.searchResults.innerHTML = '';
+        setStatus(`Logged ${registration} for ${finalOperator}.`);
+      }
+
+      elements.loginForm.addEventListener('submit', handleLogin);
+      elements.logoutBtn.addEventListener('click', handleLogout);
+      elements.saveEntryBtn.addEventListener('click', handleSaveEntry);
+      elements.registrationInput.addEventListener('input', updateSearchResults);
+      elements.registrationInput.addEventListener('blur', () => {
+        elements.registrationInput.value = normalizeRegistration(elements.registrationInput.value);
+        updateSearchResults();
+      });
+
+      elements.searchResults.addEventListener('click', (event) => {
+        const button = event.target.closest('.search-pill');
+        if (!button) return;
+
+        const registration = normalizeRegistration(button.dataset.registration || '');
+        const operator = button.dataset.operator || '';
+
+        elements.registrationInput.value = registration;
+        elements.operatorInput.value = operator;
+        elements.searchResults.innerHTML = '';
+      });
+
+      if (currentUser) {
+        showApp();
+      } else {
+        showLogin();
+      }
+
+      seedDateTime();
+      renderEntries();
+    })();
+  </script>
+  <script>
+    (() => {
+      const logoutButton = document.getElementById('homeLogoutBtn');
+      logoutButton.addEventListener('click', () => {
+        sessionStorage.removeItem('google-user-email');
+        window.location.reload();
+      });
+    })();
+  </script>
 </body>
 </html>

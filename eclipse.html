@@ -7,9 +7,9 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#fff;background:radial-gradient(circle at 50% 10%,#273b69,#0b1020 48%,#02040a);display:flex;justify-content:center;padding:12px 10px;overflow-x:hidden}
-.homeLink{display:inline-block;color:#cbd6f1;text-decoration:none;font-size:13px;margin:0 0 12px}.homeLink:hover{text-decoration:underline}
+.authGate{display:flex;align-items:center;justify-content:center;min-height:100vh;width:100%}.authCard{width:min(420px,90vw);background:rgba(18,25,45,.92);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:32px 24px;box-shadow:0 25px 60px rgba(0,0,0,.35);text-align:center}.googleLogo{display:grid;place-items:center;width:72px;height:72px;margin:0 auto 18px;border-radius:50%;background:linear-gradient(135deg,#4285F4,#34A853,#FBBC05,#EA4335);color:#fff;font-weight:900;font-size:2rem}.authCard h2{margin:0 0 10px;font-size:clamp(1.8rem,4vw,2.5rem)}.authCard p{margin:0 0 18px;color:#c7d2ea}.authCard input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:#09111d;color:#fff;font:inherit;margin-bottom:12px}.authCard button{width:100%;padding:14px 18px;border:0;border-radius:999px;background:#fff;color:#111827;font-weight:800;font-size:1rem;cursor:pointer}.authCard button:hover{filter:brightness(0.96)}.authError{min-height:20px;margin-top:10px;color:#fbb4b4;font-size:.9rem}.homeLink{display:inline-block;color:#cbd6f1;text-decoration:none;font-size:13px;margin:0 0 12px}.homeLink:hover{text-decoration:underline}
 body.fullscreen{padding:0}
-.wrap{width:min(1000px,100%);margin:auto}
+body:not(.ready) .wrap{display:none}body.ready .wrap{display:block}.wrap{width:min(1000px,100%);margin:auto}
 h1{text-align:center;font-size:clamp(26px,7vw,54px);margin:2px 0}.sub{text-align:center;color:#b8c4df;margin:0 0 12px;font-size:14px}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
 .card{background:#12192ddd;border:1px solid #ffffff20;border-radius:20px;padding:21px;text-align:center;box-shadow:0 12px 35px #0007}
@@ -200,6 +200,14 @@ function showStage(index){
   document.getElementById("stageIcon").textContent=fullscreenStage.icon;
   document.getElementById("stageTitle").textContent=translations[language].stages[events.indexOf(fullscreenStage)];
   update();
+}
+
+const GMAIL_RE = /^[a-z0-9._%+\-]+@gmail\.com$/i;
+const googleUser = sessionStorage.getItem('google-user-email');
+if (!googleUser || !GMAIL_RE.test(googleUser)) {
+  window.location.replace('login.html?next=eclipse.html');
+} else {
+  document.body.classList.add('ready');
 }
 
 const translations={

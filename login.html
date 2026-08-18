@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login with Google | Bernat Pedro</title>
+  <style>
+    :root { color-scheme: dark; --ink: #eef4ff; --muted: #aebbd3; --line: rgba(255,255,255,.14); --accent: #74d0ff; --danger: #ffaaaa; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 20px; color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: radial-gradient(circle at 50% 0, #264a73, #101a2b 42%, #070c15 100%); }
+    .card { width: min(430px, 100%); padding: 34px 26px 28px; text-align: center; background: rgba(10,17,29,.9); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+    .google-mark { width: 72px; height: 72px; display: grid; place-items: center; margin: 0 auto 18px; border-radius: 50%; color: #fff; font-size: 2rem; font-weight: 900; background: linear-gradient(135deg, #4285f4, #34a853 45%, #fbbc05 70%, #ea4335); }
+    h1 { margin: 0 0 10px; font-size: clamp(2rem, 8vw, 2.7rem); letter-spacing: -.06em; }
+    p { margin: 0 0 22px; color: var(--muted); line-height: 1.55; }
+    #gmailForm { display: grid; gap: 12px; }
+    #gmailInput { width: 100%; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.04); color: var(--ink); font: inherit; }
+    #gmailInput:focus { outline: 2px solid rgba(116,208,255,.4); border-color: var(--accent); }
+    #gmailForm button { padding: 13px 18px; border: 0; border-radius: 999px; background: var(--accent); color: #061522; font: inherit; font-weight: 800; cursor: pointer; }
+    #status { min-height: 24px; margin-top: 16px; color: var(--danger); font-size: .9rem; }
+    .back { display: inline-block; margin-top: 16px; color: var(--muted); font-size: .9rem; text-decoration: none; }
+    .back:hover { color: var(--ink); }
+    .setup-note { margin-top: 16px; padding: 10px; border: 1px dashed rgba(255,255,255,.2); color: var(--muted); font-size: .78rem; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="google-mark" aria-hidden="true">G</div>
+    <h1>Login with Google</h1>
+    <p>Enter your Gmail address to create or reopen your private browser logbook.</p>
+    <form id="gmailForm">
+      <input id="gmailInput" type="email" placeholder="you@gmail.com" autocomplete="email" required aria-label="Gmail address">
+      <button type="submit">Continue with Gmail</button>
+    </form>
+    <div id="status" role="alert" aria-live="polite"></div>
+    <a class="back" href="index.html">Back to homepage</a>
+    <div class="setup-note">Browser-only mode: your Gmail address is used as a local profile key. No email is sent and no Google password is requested.</div>
+  </main>
+
+  <script>
+    (() => {
+      const status = document.getElementById('status');
+      const gmailForm = document.getElementById('gmailForm');
+      const gmailInput = document.getElementById('gmailInput');
+      const nextPage = new URLSearchParams(window.location.search).get('next') === 'eclipse.html' ? 'eclipse.html' : 'airplane.html';
+      const gmailPattern = /^[a-z0-9._%+\-]+@gmail\.com$/i;
+
+      const existingUser = sessionStorage.getItem('google-user-email') || '';
+      if (gmailPattern.test(existingUser)) {
+        window.location.replace(nextPage);
+        return;
+      }
+
+      gmailForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const email = gmailInput.value.trim().toLowerCase();
+        if (!gmailPattern.test(email)) {
+          status.textContent = 'Please enter a Gmail address ending in @gmail.com.';
+          gmailInput.focus();
+          return;
+        }
+        sessionStorage.setItem('google-user-email', email);
+        if (sessionStorage.getItem('google-user-email') !== email) {
+          status.textContent = 'Your browser blocked session storage. Please enable site storage and try again.';
+          return;
+        }
+        window.location.replace(nextPage);
+      });
+    })();
+  </script>
+</body>
+</html>
