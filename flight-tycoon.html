@@ -1,0 +1,264 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Flight Tycoon Remastered</title><meta name="theme-color" content="#06111d"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest">
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#06111d;color:#eef7ff}body{background:radial-gradient(circle at 50% -10%,#1c4b73,#06111d 52%)}button,input,select{font:inherit}button{-webkit-appearance:none}input,select{font-size:16px}.top{min-height:70px;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid #28445f;background:#071522ee;position:sticky;top:0;z-index:10}.brand{font-weight:900;font-size:21px;white-space:nowrap}.brand span{color:#4da3ff}.stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.stat{background:#10253a;border:1px solid #294762;border-radius:10px;padding:7px 12px;min-width:82px}.stat small{display:block;color:#91a8c2;font-size:11px}.stat b{display:block}.wrap{max-width:1180px;margin:0 auto;padding:28px 18px 50px}.page{display:none}.page.active{display:block}.hero{text-align:center;margin:15px auto 25px}.hero h1{font-size:42px;margin:0 0 8px}.hero p{color:#91a8c2;margin:0}.panel,.box{background:linear-gradient(180deg,#0c1c2e,#091624);border:1px solid #294762;border-radius:18px;box-shadow:0 18px 55px #0005}.panel{max-width:950px;margin:auto;padding:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.label{font-size:12px;color:#91a8c2;font-weight:800;letter-spacing:.08em;display:block;margin-bottom:8px}.careers{display:grid;gap:10px}.career{padding:15px;border:1px solid #294762;background:#071523;border-radius:12px;cursor:pointer}.career:hover,.career.selected{border-color:#4da3ff;background:#0d2943}.career b{display:block}.career small{display:block;color:#91a8c2;margin-top:4px;line-height:1.35}.select,.search{width:100%;padding:12px;border-radius:10px;background:#071523;color:#fff;border:1px solid #294762;outline:none}.info{margin-top:15px;padding:14px;border-radius:12px;background:#071523;border:1px solid #294762;color:#a9bdd0;line-height:1.45}.btn{width:100%;margin-top:20px;padding:14px;border:0;border-radius:11px;background:#4da3ff;color:#03101c;font-weight:900;cursor:pointer}.btn:disabled{opacity:.35;cursor:not-allowed}.opsHead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.opsHead h1{margin:0}.muted{color:#91a8c2}.back{background:#132d46;color:#fff;border:1px solid #294762;border-radius:9px;padding:9px 12px;cursor:pointer}.opsgrid{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}.box{padding:17px;min-width:0}.box h2{font-size:16px;margin:0 0 13px}.current{font-size:28px;font-weight:900}.route{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#071523;border:1px solid #294762;border-radius:11px;padding:12px;margin:8px 0;min-width:0}.routeInfo{min-width:0;overflow:hidden}.routeInfo b,.routeInfo small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.route small{color:#91a8c2}.route button{flex:0 0 auto;border:0;background:#17466f;color:#fff;padding:9px 11px;border-radius:8px;font-weight:800;cursor:pointer}.route button:disabled{opacity:.3;cursor:not-allowed}.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}.modal.open{display:flex}.modalCard{width:min(520px,100%);background:linear-gradient(180deg,#10243a,#081522);border:1px solid #355a7a;border-radius:18px;box-shadow:0 25px 80px #0008;padding:22px}.modalTop{display:flex;justify-content:space-between;align-items:center;gap:12px}.modalTop h2{margin:0}.close{background:#17324b;color:#fff;border:1px solid #31536f;border-radius:8px;padding:7px 10px;cursor:pointer}.flightInfoGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0}.flightInfoItem{background:#071523;border:1px solid #294762;border-radius:10px;padding:11px}.flightInfoItem small{display:block;color:#91a8c2}.flightInfoItem b{display:block;margin-top:3px}.startBtn{width:100%;padding:13px;border:0;border-radius:10px;background:#4da3ff;color:#03101c;font-weight:900;cursor:pointer}.flight{min-height:450px}.airports{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.airport{background:#071523;border:1px solid #294762;padding:12px 15px;border-radius:11px;min-width:105px}.airport strong{font-size:22px}.airport small{display:block;color:#91a8c2}.arrow{font-size:25px;color:#4da3ff}.progressbg{height:17px;background:#040b12;border:1px solid #294762;border-radius:99px;overflow:hidden;margin:18px 0}.progress{height:100%;background:linear-gradient(90deg,#348fff,#69d9ff);transition:width .25s}.metas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.mini{background:#071523;border:1px solid #294762;border-radius:10px;padding:10px;min-width:0}.mini small{color:#91a8c2;display:block}.mini b{display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis}.collect{width:100%;padding:13px;border:0;border-radius:10px;background:#43d17b;font-weight:900;margin-top:15px;cursor:pointer}.collect:disabled{opacity:.28;filter:saturate(.2);cursor:not-allowed}.log{height:180px;overflow:auto;background:#040b12;border:1px solid #294762;border-radius:9px;padding:9px;font:12px ui-monospace,monospace;color:#9eb4ca}.upgrade{background:#071523;border:1px solid #294762;border-radius:10px;padding:11px;margin-top:8px;overflow:hidden}.upgrade button{float:right;background:#17466f;color:#fff;border:0;border-radius:7px;padding:7px 9px;cursor:pointer}.upgrade small{display:block;max-width:75%;line-height:1.35}.hr{border:0;border-top:1px solid #294762;margin:15px 0}.achievementDownloads{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:820px){.top{align-items:flex-start;flex-direction:column}.stats{justify-content:flex-start}.grid,.opsgrid{grid-template-columns:1fr}.hero h1{font-size:32px}.metas{grid-template-columns:1fr 1fr}.panel{padding:17px}.wrap{padding:20px 12px 40px}}
+@media(max-width:480px){.achievementDownloads{grid-template-columns:1fr}.achievementDownloads .btn{margin-top:10px}
+html{font-size:16px;-webkit-text-size-adjust:100%;overflow-x:hidden}
+*{min-width:0}
+
+body{overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+.top{padding:10px 12px;min-height:auto;position:sticky;top:0}
+.brand{font-size:19px}
+.stats{width:100%;display:flex!important;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:2px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.stats::-webkit-scrollbar{display:none}
+.stat{min-width:88px;padding:8px 10px}
+.wrap{padding:14px 10px 28px}
+.hero{margin:8px auto 18px}
+.hero h1{font-size:28px;line-height:1.1}
+.hero p{font-size:14px}
+.panel,.box{border-radius:14px}
+.panel{padding:14px}
+.grid,.opsgrid{gap:12px}
+.select,.search{font-size:16px;min-height:46px}
+.career{padding:14px;min-height:58px}
+.btn,.startBtn,.collect{min-height:48px;font-size:16px}
+.opsHead{align-items:stretch;flex-direction:column;gap:10px}
+.opsHead h1{font-size:25px}
+.back{width:100%;min-height:44px;font-size:15px}
+.current{font-size:25px}
+.route{align-items:center;padding:11px;gap:8px}
+.routeInfo{min-width:0;flex:1}
+.routeInfo b{font-size:14px}
+.routeInfo small{font-size:12px}
+.route button{min-width:72px;min-height:44px;padding:9px 12px;font-size:14px}
+.flight{min-height:360px}
+.airports{justify-content:center;gap:8px}
+.airport{min-width:95px;padding:10px 12px;text-align:center}
+.airport strong{font-size:20px}
+.arrow{font-size:20px}
+.metas{grid-template-columns:1fr 1fr;gap:7px}
+.mini{padding:9px;font-size:14px}
+.log{height:160px;font-size:11px}
+.upgrade{padding:12px;min-height:76px}
+.upgrade button{min-height:42px;padding:8px 11px}
+.modal{padding:10px;align-items:flex-end}
+.modalCard{width:100%;max-height:90dvh;overflow-y:auto;border-radius:18px 18px 10px 10px;padding:16px}
+.modalTop h2{font-size:20px}
+.flightInfoGrid{grid-template-columns:1fr 1fr;gap:7px;margin:14px 0}
+.flightInfoItem{padding:9px;font-size:14px;min-width:0}
+.flightInfoItem b{overflow-wrap:anywhere}
+.close{min-width:44px;min-height:44px}
+.installBar{padding-left:10px!important;padding-right:10px!important}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.opsHead{align-items:stretch;flex-direction:column}
+.opsHead .back{width:100%}
+.route{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;width:100%;overflow:hidden}
+.routeInfo{width:100%;overflow:visible}
+.routeInfo b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;word-break:break-word;line-height:1.25}
+.routeInfo small{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.25}
+.route button{width:auto;min-width:72px;max-width:90px;white-space:normal;flex:none}
+.upgrade{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;overflow:visible}
+.upgrade b,.upgrade small{min-width:0;overflow-wrap:anywhere}
+.upgrade button{float:none;grid-column:2;grid-row:1 / span 2;min-width:72px;max-width:100px;white-space:normal}
+.flightInfoGrid{min-width:0}
+
+}
+
+html, body { width:100%; max-width:100%; overflow-x:clip !important; }
+*, *::before, *::after { box-sizing:border-box; }
+img, canvas, svg, video, iframe { max-width:100%; height:auto; }
+@media (max-width: 700px) {
+  .wrap, main, header, section, .panel, .grid, .opsgrid, .route, .box { width:100%; min-width:0; }
+  .grid, .opsgrid { max-width:100%; }
+  .top, .wrap { overflow:visible; }
+  .route { overflow:visible; }
+  .routeInfo { min-width:0; flex:1 1 auto; }
+  .route button { flex:0 0 72px; width:72px; }
+  .upgrade { overflow:visible; display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:10px; align-items:start; }
+  .upgrade button { float:none; grid-column:2; grid-row:1 / span 2; width:auto; min-width:72px; }
+  .upgrade b, .upgrade small { grid-column:1; }
+  .upgrade small { max-width:none; }
+}
+
+
+.endCareer{background:#5a2330;color:#fff;border:1px solid #8c3b4d;border-radius:9px;padding:9px 12px;cursor:pointer;font-weight:800}.achievement{max-width:980px;margin:25px auto}.achievement .panel{max-width:none}.achievementHero{text-align:center;padding:10px 0 20px}.achievementHero h1{font-size:38px;margin:0 0 7px}.achievementGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.achievementStat{background:#071523;border:1px solid #294762;border-radius:12px;padding:15px}.achievementStat small{display:block;color:#91a8c2}.achievementStat b{display:block;font-size:22px;margin-top:4px}.achievementList{margin-top:18px;background:#071523;border:1px solid #294762;border-radius:12px;padding:15px;line-height:1.7}.achievementActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.achievementActions button{margin:0}@media(max-width:700px){.achievementGrid{grid-template-columns:1fr 1fr}.achievementActions{grid-template-columns:1fr}.achievementHero h1{font-size:30px}}@media(max-width:480px){.achievementDownloads{grid-template-columns:1fr}.achievementDownloads .btn{margin-top:10px}.achievementGrid{grid-template-columns:1fr}.achievementStat b{font-size:20px}}
+</style></head><body>
+<div id="installBar" style="display:none;padding:10px 18px;background:#0b2236;border-bottom:1px solid #294762;text-align:center"><button id="installApp" class="back" style="margin:0">📲 Install Flight Tycoon as an App</button></div><header class="top"><div class="brand">✈ FLIGHT<span>TYCOON</span></div><div id="stats" class="stats" style="display:none"></div></header>
+<div id="flightModal" class="modal"><div class="modalCard"><div class="modalTop"><h2>Flight Information</h2><button id="closeModal" class="close">✕</button></div><div id="modalContent"></div></div></div><main class="wrap">
+<section id="careerPage" class="page active"><div class="hero"><h1>Create Your Career</h1><p>Choose your pilot path and your starting airport. Start with $1,000.</p></div><div class="panel"><div class="grid"><div><label class="label">CAREER</label><div id="careers" class="careers"></div></div><div><label class="label">STARTING AIRPORT</label><select id="start" class="select"></select><div class="info"><b>Network system</b><br>There is no career airline. Real airline names appear on individual flights. After landing, the destination becomes your current airport.</div></div></div><button id="create" class="btn" disabled>Create Career &amp; Enter Network</button></div></section>
+<section id="opsPage" class="page"><div class="opsHead"><div><h1>Flight Operations</h1><div class="muted">Your career network</div></div><button id="endCareer" class="endCareer">End Career</button></div><div class="opsgrid"><aside><div class="box"><h2>Current Airport</h2><div id="current" class="current"></div><div id="currentName" class="muted"></div><hr class="hr"><h2>Search Network</h2><input id="search" class="search" placeholder="Search city, airport or IATA…"><div id="routes"></div></div><div class="box" style="margin-top:18px"><h2>Upgrades</h2><div id="upgrades"></div></div></aside><section><div class="box flight"><h2>Flight Control</h2><div id="flightArea"></div></div><div class="box" style="margin-top:18px"><h2>Operations Log</h2><div id="log" class="log"></div></div></section></div></section>
+<section id="achievementPage" class="page"><div class="achievement"><div class="panel"><div class="achievementHero"><h1>🏆 Career Achievements</h1><p class="muted">Your complete Flight Tycoon career report</p></div><div id="achievementContent"></div><div class="achievementActions"><div class="achievementDownloads"><button id="downloadAchievementMobile" class="btn">📱 Download Achievement — Mobile</button><button id="downloadAchievementPC" class="btn">💻 Download Achievement — PC</button></div><button id="achievementNewCareer" class="back">✈ New Career</button></div></div></div></section>
+</main>
+<script>
+'use strict';
+const airports=[['LCG','A Coruña Airport','A Coruña'],['MAD','Adolfo Suárez Madrid–Barajas','Madrid'],['BCN','Barcelona–El Prat','Barcelona'],['LHR','Heathrow','London'],['CDG','Charles de Gaulle','Paris'],['LIS','Humberto Delgado','Lisbon'],['OPO','Francisco Sá Carneiro','Porto'],['FRA','Frankfurt','Frankfurt'],['AMS','Schiphol','Amsterdam'],['FCO','Fiumicino','Rome'],['ZRH','Zurich','Zurich'],['MUC','Munich','Munich'],['DUB','Dublin','Dublin'],['JFK','John F. Kennedy','New York'],['MIA','Miami','Miami'],['LAX','Los Angeles','Los Angeles'],['SFO','San Francisco','San Francisco'],['ORD','O’Hare','Chicago'],['YYZ','Pearson','Toronto'],['DXB','Dubai','Dubai'],['DOH','Hamad','Doha'],['IST','Istanbul','Istanbul'],['GRU','Guarulhos','São Paulo'],['EZE','Ezeiza','Buenos Aires'],['SCL','Arturo Merino Benítez','Santiago'],['MEX','Mexico City','Mexico City'],['NRT','Narita','Tokyo'],['HND','Haneda','Tokyo'],['SIN','Changi','Singapore'],['SYD','Sydney','Sydney'],['MEL','Melbourne','Melbourne'],['ICN','Incheon','Seoul'],['BOM','Chhatrapati Shivaji','Mumbai'],['DEL','Indira Gandhi','Delhi'],['CPT','Cape Town','Cape Town'],['LPA','Gran Canaria','Las Palmas'],['TFS','Tenerife South','Tenerife'],['VGO','Vigo','Vigo'],['SCQ','Santiago–Rosalía de Castro','Santiago de Compostela'],['BIO','Bilbao','Bilbao'],['SVQ','Seville','Seville'],['AGP','Málaga','Málaga'],['PMI','Palma de Mallorca','Palma'],['ALC','Alicante–Elche','Alicante']];
+const routes={LCG:[['MAD',70],['BCN',90],['LIS',95],['LHR',120],['CDG',120],['JFK',430],['MIA',500],['LPA',155],['VGO',75],['SCQ',65]],MAD:[['BCN',75],['LIS',75],['LHR',160],['CDG',125],['FCO',145],['FRA',150],['LPA',175],['SCQ',70],['VGO',75],['AGP',85],['PMI',80],['JFK',480],['DXB',420]],BCN:[['MAD',75],['LIS',115],['LHR',150],['CDG',120],['FCO',110],['AMS',145],['ZRH',105],['JFK',500],['VGO',105],['PMI',55]],LHR:[['MAD',160],['CDG',80],['AMS',70],['DUB',75],['FRA',100],['JFK',420],['DXB',410],['LIS',165]],CDG:[['MAD',125],['LHR',80],['FCO',125],['AMS',85],['FRA',75],['LIS',155],['JFK',480],['DXB',390]],LIS:[['MAD',75],['OPO',55],['LHR',165],['CDG',155],['FCO',180],['FRA',185],['JFK',450]],FRA:[['MAD',150],['LHR',100],['CDG',75],['AMS',70],['ZRH',60],['FCO',120],['DXB',390],['JFK',510]],ZRH:[['MAD',120],['BCN',105],['LHR',105],['CDG',75],['FRA',60],['FCO',85],['JFK',510],['DXB',370]],DXB:[['MAD',420],['LHR',410],['FRA',390],['IST',300],['DOH',75],['JFK',780],['SIN',420],['BOM',180]],JFK:[['MAD',480],['LHR',420],['CDG',480],['MIA',190],['LAX',360],['SFO',390],['ORD',150],['YYZ',90]],MIA:[['JFK',190],['LAX',300],['ORD',190],['MAD',510],['GRU',500]],LAX:[['SFO',80],['JFK',360],['ORD',240],['MIA',300],['NRT',660],['HND',660]],SFO:[['LAX',80],['JFK',390],['ORD',250],['NRT',660],['ICN',680]],NRT:[['HND',75],['LAX',660],['SFO',660],['SIN',420],['ICN',150]],SIN:[['DXB',420],['BOM',180],['NRT',420],['SYD',460],['MEL',450],['ICN',390]],SYD:[['MEL',95],['SIN',460],['LAX',870],['NRT',570]],OPO:[['LIS',55],['MAD',80],['LHR',155],['CDG',150]],SCQ:[['MAD',70],['BCN',105],['LIS',95],['LHR',155],['PMI',115]],VGO:[['MAD',75],['BCN',105],['LIS',100]],AGP:[['MAD',85],['BCN',100],['LHR',175],['CDG',160],['LIS',95],['FRA',180]],PMI:[['MAD',80],['BCN',55],['LHR',145],['FRA',145],['CDG',125]],LPA:[['MAD',175],['BCN',190],['LHR',250],['FRA',300],['LIS',145]],TFS:[['MAD',170],['LHR',270],['LIS',155],['FRA',300]]};
+const airlines=['Iberia','Vueling','Air Europa','Ryanair','easyJet','British Airways','Air France','TAP Air Portugal','Lufthansa','KLM','ITA Airways','SWISS','Aer Lingus','American Airlines','Delta Air Lines','United Airlines','Air Canada','Emirates','Qatar Airways','Turkish Airlines','LATAM','Japan Airlines','ANA','Singapore Airlines','Qantas','Air India'];
+const careers=[['Regional Captain','Short-haul specialist · +8% XP under 2h'],['International Captain','Long-haul specialist · +12% payout over 4h'],['Budget Pilot','Efficient operator · flights cost 15% less'],['Executive Pilot','Premium operator · +10% base payout']];
+let selectedCareer=-1,game=null,timer=null;const $=id=>document.getElementById(id);const ap=c=>airports.find(a=>a[0]===c)||[c,c,'Unknown'];const money=n=>'$'+Math.round(n).toLocaleString();
+function save(){localStorage.setItem('flightTycoonCareer',JSON.stringify(game))}function log(s){if(game){game.log=game.log||[];game.log.push('['+new Date().toLocaleTimeString()+'] '+s);} $('log').innerHTML='<div>['+new Date().toLocaleTimeString()+'] '+s+'</div>'+$('log').innerHTML}
+const routeAirlines={'LCG-MAD':['Iberia','Air Europa'],'LCG-BCN':['Vueling'],'LCG-LIS':['TAP Air Portugal'],'LCG-LHR':['Vueling','British Airways'],'LCG-CDG':['Air France'],'LCG-JFK':['Iberia','American Airlines'],'LCG-MIA':['Iberia','American Airlines'],'MAD-BCN':['Iberia','Vueling','Ryanair'],'MAD-LIS':['Iberia','TAP Air Portugal'],'MAD-LHR':['Iberia','British Airways'],'MAD-CDG':['Iberia','Air France'],'MAD-FCO':['Iberia','ITA Airways'],'MAD-FRA':['Iberia','Lufthansa'],'MAD-JFK':['Iberia','American Airlines'],'MAD-DXB':['Emirates'],'BCN-LHR':['Vueling','British Airways'],'BCN-CDG':['Vueling','Air France'],'BCN-FCO':['Vueling','ITA Airways'],'BCN-AMS':['Vueling','KLM'],'BCN-ZRH':['Vueling','SWISS'],'LHR-CDG':['British Airways','Air France'],'LHR-AMS':['British Airways','KLM'],'LHR-JFK':['British Airways','American Airlines','Delta Air Lines'],'LHR-DXB':['British Airways','Emirates'],'CDG-FCO':['Air France','ITA Airways'],'CDG-AMS':['Air France','KLM'],'CDG-FRA':['Air France','Lufthansa'],'LIS-OPO':['TAP Air Portugal'],'LIS-LHR':['TAP Air Portugal','British Airways'],'FRA-ZRH':['Lufthansa','SWISS'],'FRA-DXB':['Lufthansa','Emirates'],'ZRH-DXB':['SWISS','Emirates'],'DXB-DOH':['Emirates','Qatar Airways'],'JFK-MIA':['American Airlines','Delta Air Lines'],'JFK-LAX':['American Airlines','Delta Air Lines'],'JFK-ORD':['American Airlines','United Airlines'],'JFK-YYZ':['Air Canada','United Airlines'],'LAX-SFO':['United Airlines','Delta Air Lines'],'LAX-NRT':['Japan Airlines','ANA'],'SFO-NRT':['United Airlines','ANA'],'NRT-HND':['Japan Airlines','ANA'],'NRT-SIN':['Singapore Airlines'],'SIN-SYD':['Singapore Airlines','Qantas'],'SIN-MEL':['Singapore Airlines','Qantas']};
+const routeFlights={
+'LCG-MAD':[['IB464','Iberia',80],['UX7232','Air Europa',70],['IB1114','Iberia',80],['UX7234','Air Europa',70]],
+'LCG-BCN':[['VY1293','Vueling',100],['VY1295','Vueling',100],['VY1291','Vueling',105],['VY1135','Vueling',100],['VY1137','Vueling',100]],
+'LCG-LHR':[['IB567','Iberia',130],['BA7110','British Airways',130]],
+'LCG-CDG':[['AF1607','Air France',115]],
+'MAD-BCN':[['IB411','Iberia',75],['VY1003','Vueling',75],['FR1000','Ryanair',80]],
+'MAD-LIS':[['IB539','Iberia',75],['TP1011','TAP Air Portugal',80]],
+'MAD-LHR':[['IB711','Iberia',160],['BA461','British Airways',160]],
+'MAD-CDG':[['IB573','Iberia',125],['AF1101','Air France',125]],
+'MAD-FCO':[['IB651','Iberia',145],['AZ63','ITA Airways',145]],
+'MAD-FRA':[['IB1321','Iberia',150],['LH1113','Lufthansa',150]],
+'MAD-JFK':[['IB211','Iberia',480],['AA95','American Airlines',480]],
+'MAD-DXB':[['EK142','Emirates',420]],
+'BCN-LHR':[['VY782','Vueling',150],['BA473','British Airways',150]],
+'BCN-CDG':[['VY8009','Vueling',120],['AF1449','Air France',120]],
+'BCN-FCO':[['VY6100','Vueling',110],['AZ77','ITA Airways',110]],
+'BCN-AMS':[['VY8300','Vueling',145],['KL1510','KLM',145]],
+'BCN-ZRH':[['VY6248','Vueling',105],['LX1955','SWISS',105]],
+'LHR-CDG':[['BA304','British Airways',80],['AF1381','Air France',80]],
+'LHR-AMS':[['BA428','British Airways',70],['KL1000','KLM',70]],
+'LHR-JFK':[['BA117','British Airways',420],['AA101','American Airlines',420],['DL1','Delta Air Lines',420]],
+'LHR-DXB':[['BA107','British Airways',410],['EK2','Emirates',410]],
+'CDG-FCO':[['AF1404','Air France',125],['AZ317','ITA Airways',125]],
+'CDG-AMS':[['AF1640','Air France',85],['KL1402','KLM',85]],
+'LIS-OPO':[['TP1920','TAP Air Portugal',55]],
+'LIS-LHR':[['TP1350','TAP Air Portugal',165],['BA503','British Airways',165]],
+'FRA-ZRH':[['LH1184','Lufthansa',60],['LX1073','SWISS',60]],
+'FRA-DXB':[['LH630','Lufthansa',390],['EK44','Emirates',390]],
+'ZRH-DXB':[['LX242','SWISS',370],['EK88','Emirates',370]],
+'DXB-DOH':[['EK847','Emirates',75],['QR1003','Qatar Airways',75]],
+'JFK-MIA':[['AA1004','American Airlines',190],['DL1234','Delta Air Lines',190]],
+'JFK-LAX':[['AA1','American Airlines',360],['DL123','Delta Air Lines',360]],
+'JFK-ORD':[['AA123','American Airlines',150],['UA123','United Airlines',150]],
+'JFK-YYZ':[['AC701','Air Canada',90],['UA823','United Airlines',90]],
+'LAX-SFO':[['UA123','United Airlines',80],['DL1234','Delta Air Lines',80]],
+'LAX-NRT':[['JL61','Japan Airlines',660],['NH105','ANA',660]],
+'SFO-NRT':[['UA837','United Airlines',660],['NH107','ANA',660]],
+'NRT-HND':[['JL303','Japan Airlines',75],['NH25','ANA',75]],
+'NRT-SIN':[['SQ12','Singapore Airlines',420]],
+'SIN-SYD':[['SQ221','Singapore Airlines',460],['QF2','Qantas',460]],
+'SIN-MEL':[['SQ207','Singapore Airlines',450],['QF36','Qantas',450]]
+};
+function flightFor(from,to,mins){const key=from+'-'+to,rev=to+'-'+from;const pool=routeFlights[key]||routeFlights[rev];if(pool){const f=pool[Math.floor(Math.random()*pool.length)];return {number:f[0],airline:f[1],mins:f[2]};}return {number:'FT'+Math.floor(100+Math.random()*8900),airline:airlineFor(from,to),mins};}
+function airlineFor(from,to){const key=from+'-'+to,rev=to+'-'+from;const pool=routeAirlines[key]||routeAirlines[rev]||airlines;return pool[Math.floor(Math.random()*pool.length)]}
+function formatDuration(mins){if(mins<60)return mins+' minutes';const h=Math.floor(mins/60),m=mins%60;if(m===0)return h+' hour'+(h===1?'':'s');return h+'h '+m+'m'}
+function formatGameTime(seconds){seconds=Math.max(0,Math.round(seconds));if(seconds<60)return seconds+' second'+(seconds===1?'':'s');const mins=Math.floor(seconds/60),secs=seconds%60;if(mins<60){if(secs===0)return mins+' minute'+(mins===1?'':'s');return mins+' min '+secs+' sec'}const h=Math.floor(mins/60),m=mins%60;if(m===0)return h+' hour'+(h===1?'':'s');return h+'h '+m+'m'}
+careers.forEach((c,i)=>{const d=document.createElement('div');d.className='career';d.innerHTML='<b>'+c[0]+'</b><small>'+c[1]+'</small>';d.addEventListener('click',()=>{selectedCareer=i;document.querySelectorAll('.career').forEach(x=>x.classList.remove('selected'));d.classList.add('selected');$('create').disabled=false});$('careers').appendChild(d)});
+airports.forEach(a=>{const o=document.createElement('option');o.value=a[0];o.textContent=a[0]+' — '+a[1]+' ('+a[2]+')';$('start').appendChild(o)});
+function closeFlightInfo(){ $('flightModal').classList.remove('open'); }
+function showFlightInfo(to,mins,airline,number){
+  const from=ap(game.airport), dest=ap(to);
+  const payout=Math.max(140,Math.round(180+mins*2.1+game.level*55));
+  $('modalContent').innerHTML='<div class="flightInfoGrid">'+
+    '<div class="flightInfoItem"><small>Flight</small><b>'+number+'</b></div>'+
+    '<div class="flightInfoItem"><small>Airline</small><b>'+airline+'</b></div>'+
+    '<div class="flightInfoItem"><small>Departure</small><b>'+from[0]+' • '+from[2]+'</b></div>'+
+    '<div class="flightInfoItem"><small>Arrival</small><b>'+dest[0]+' • '+dest[2]+'</b></div>'+
+    '<div class="flightInfoItem"><small>Real flight time</small><b>'+formatDuration(mins)+'</b></div>'+
+    '<div class="flightInfoItem"><small>Game flight time</small><b>'+formatGameTime(mins)+'</b></div>'+
+    '<div class="flightInfoItem"><small>Estimated payout</small><b>'+money(payout)+'</b></div>'+
+    '<div class="flightInfoItem"><small>Route</small><b>'+from[0]+' → '+dest[0]+'</b></div>'+
+    '</div><button class="startBtn" id="startFlightBtn">Start Flight</button>';
+  $('flightModal').classList.add('open');
+  $('startFlightBtn').addEventListener('click',()=>{closeFlightInfo();startFlight(to,mins,airline,number,payout)});
+}
+function startFlight(to,realMins,airline,number,payout){
+  if(game.flight)return;
+  game.flight={from:game.airport,to,mins:realMins,airline,number,start:Date.now(),duration:realMins,payout,landed:false};
+  save();log('Departed '+game.flight.from+' → '+to+' on '+airline+' '+number+'.');render();tick();
+}
+function idleFlight(){
+  $('flightArea').innerHTML='<div class="muted">Select a flight from the Network and press <b>Info</b> to view its details.</div>';
+}
+function showFlight(p){
+  const f=game.flight, from=ap(f.from), to=ap(f.to), elapsed=Math.min(f.duration,(Date.now()-f.start)/1000), pct=Math.min(1,elapsed/f.duration);
+  const left=Math.max(0,f.duration-elapsed);
+  $('flightArea').innerHTML='<div class="airports"><div class="airport"><strong>'+from[0]+'</strong><small>'+from[2]+'</small></div><div class="arrow">→</div><div class="airport"><strong>'+to[0]+'</strong><small>'+to[2]+'</small></div></div>'+
+    '<p class="muted"><b>'+f.airline+' '+f.number+'</b> · '+formatDuration(f.mins)+'</p>'+
+    '<div class="progressbg"><div class="progress" style="width:'+(pct*100)+'%"></div></div>'+
+    '<div class="metas"><div class="mini"><small>Progress</small><b>'+Math.round(pct*100)+'%</b></div><div class="mini"><small>Time left</small><b>'+formatGameTime(left)+'</b></div><div class="mini"><small>Real time</small><b>'+formatDuration(f.mins)+'</b></div><div class="mini"><small>Payout</small><b>'+money(f.payout)+'</b></div></div>'+
+    '<button id="collect" class="collect" '+(pct<1?'disabled':'')+'>Collect Money &amp; Land</button>';
+  $('collect').addEventListener('click',collectFlight);
+  if(pct>=1&&!f.landed)finishFlight();
+}
+function finishFlight(){
+  if(!game.flight)return;
+  game.flight.landed=true;save();log('Landed at '+game.flight.to+'. Flight '+game.flight.number+' complete.');render();
+}
+function collectFlight(){
+  const f=game.flight;if(!f||!f.landed)return;
+  game.cash+=f.payout;const oldLevel=game.level;game.xp+=Math.max(10,Math.round(f.mins/5));
+  game.level=1+Math.floor(game.xp/100);game.airport=f.to;game.stats=game.stats||{flights:0,miles:0,earnings:0,airports:[],upgrades:0,bestPayout:0,started:new Date().toISOString(),history:[]};game.stats.history=game.stats.history||[];game.stats.flights=(game.stats.flights||0)+1;game.stats.earnings=(game.stats.earnings||0)+f.payout;game.stats.bestPayout=Math.max(game.stats.bestPayout||0,f.payout);game.stats.miles=(game.stats.miles||0)+Math.round(f.mins*7.2);game.stats.history.push({number:f.number,airline:f.airline,from:f.from,to:f.to,mins:f.mins,payout:f.payout});game.stats.airports=game.stats.airports||[f.from];if(!game.stats.airports.includes(f.to))game.stats.airports.push(f.to);game.flight=null;save();log('Collected '+money(f.payout)+'. Current airport: '+game.airport+'.');if(game.level>oldLevel)log('LEVEL UP! You reached Level '+game.level+'. Upgrade prices have increased.');render();
+}
+function tick(){
+  if(timer)clearInterval(timer);
+  timer=setInterval(()=>{
+    if(!game||!game.flight){clearInterval(timer);timer=null;return;}
+    const p=Math.min(1,(Date.now()-game.flight.start)/1000/game.flight.duration);
+    showFlight(p);
+    if(p>=1){clearInterval(timer);timer=null;}
+    save();
+  },250);
+}
+$('closeModal').addEventListener('click',closeFlightInfo);
+$('flightModal').addEventListener('click',e=>{if(e.target===$('flightModal'))closeFlightInfo();});
+function showCareer(){if(timer)clearInterval(timer);$('careerPage').classList.add('active');$('opsPage').classList.remove('active');$('stats').style.display='none'}
+function showOps(){ $('careerPage').classList.remove('active');$('opsPage').classList.add('active');$('stats').style.display='flex'}
+function createCareer(){if(selectedCareer<0)return;game={career:selectedCareer,airport:$('start').value,cash:1000,xp:0,level:1,up:{range:0,reliability:0,premium:0},flight:null,log:[]};save();showOps();render();log('Career created at '+game.airport+'. Starting cash: $1,000.')}
+function endCareer(){if(!game)return;if(game.flight&&!confirm('You have a flight in progress. End the career anyway?'))return;if(timer)clearInterval(timer);timer=null;showAchievements();}
+function showAchievements(){if(!game)return;const st=game.stats||{};const totalUp=(game.up?.range||0)+(game.up?.reliability||0)+(game.up?.premium||0);const visited=(st.airports||[game.airport]).length;const start=st.started?new Date(st.started).toLocaleDateString():new Date().toLocaleDateString();$('achievementContent').innerHTML='<div class="achievementGrid">'+
+'<div class="achievementStat"><small>Career</small><b>'+careers[game.career][0]+'</b></div>'+
+'<div class="achievementStat"><small>Starting Airport</small><b>'+ap((st.airports&&st.airports[0])||game.airport)[0]+'</b></div>'+
+'<div class="achievementStat"><small>Final Level</small><b>Level '+game.level+'</b></div>'+
+'<div class="achievementStat"><small>Flights Completed</small><b>'+ (st.flights||0) +'</b></div>'+
+'<div class="achievementStat"><small>Total Earnings</small><b>'+money(st.earnings||0)+'</b></div>'+
+'<div class="achievementStat"><small>Best Payout</small><b>'+money(st.bestPayout||0)+'</b></div>'+
+'<div class="achievementStat"><small>Airports Visited</small><b>'+visited+'</b></div>'+
+'<div class="achievementStat"><small>Distance Flown</small><b>'+Math.round(st.miles||0).toLocaleString()+' mi</b></div>'+
+'<div class="achievementStat"><small>Upgrades Bought</small><b>'+totalUp+'</b></div>'+
+'</div><div class="achievementList"><b>Career Details</b><br>Started: '+start+'<br>Final Airport: '+ap(game.airport)[0]+' • '+ap(game.airport)[2]+'<br>Final Cash: '+money(game.cash)+'<br>XP: '+game.xp+'<br><br><b>Airports visited</b><br>'+((st.airports||[]).map(x=>ap(x)[0]+' • '+ap(x)[2]).join(' → ')||ap(game.airport)[0])+'</div><div class="achievementList"><b>Flights completed</b><br>'+((st.history||[]).map((f,i)=>(i+1)+'. '+f.number+' · '+f.airline+' · '+f.from+' → '+f.to+' · '+formatDuration(f.mins)+' · '+money(f.payout)).join('<br>')||'No flights completed.')+'</div>';
+$('careerPage').classList.remove('active');$('opsPage').classList.remove('active');$('achievementPage').classList.add('active');$('stats').style.display='none';}
+function achievementText(){
+  const st=game.stats||{}, totalUp=(game.up?.range||0)+(game.up?.reliability||0)+(game.up?.premium||0);
+  return {
+    career:careers[game.career][0], level:game.level, flights:st.flights||0, earnings:money(st.earnings||0), best:money(st.bestPayout||0),
+    airports:(st.airports||[]).length, miles:Math.round(st.miles||0).toLocaleString()+' mi', upgrades:totalUp, cash:money(game.cash), xp:game.xp,
+    start:ap((st.airports&&st.airports[0])||game.airport)[0]+' • '+ap((st.airports&&st.airports[0])||game.airport)[2],
+    final:ap(game.airport)[0]+' • '+ap(game.airport)[2],
+    visited:(st.airports||[]).map(x=>ap(x)[0]+' • '+ap(x)[2]).join(' → ')||ap(game.airport)[0],
+    history:(st.history||[]).map((f,i)=>(i+1)+'. '+f.number+' · '+f.airline+' · '+f.from+' → '+f.to+' · '+formatDuration(f.mins)+' · '+money(f.payout)),
+    log:(game.log||[])
+  };
+}
+function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight){let words=String(text).split(' '),line='';for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){ctx.fillText(line,x,y);y+=lineHeight;line=word}else line=test}if(line){ctx.fillText(line,x,y);y+=lineHeight}return y;}
+function downloadAchievementImage(mode){
+  if(!game)return;
+  const d=achievementText(), mobile=mode==='mobile', w=mobile?1080:1920, h=mobile?1920:1080, scale=mobile?1:1;
+  const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');
+  const grad=ctx.createLinearGradient(0,0,w,h);grad.addColorStop(0,'#102f4b');grad.addColorStop(.55,'#081a2b');grad.addColorStop(1,'#04101b');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#4da3ff';ctx.fillRect(0,0,w,mobile?18:14);
+  const pad=mobile?70:90;ctx.fillStyle='#eef7ff';ctx.font=`900 ${mobile?58:64}px system-ui`;ctx.fillText('🏆 FLIGHT TYCOON',pad,100);
+  ctx.font=`800 ${mobile?42:48}px system-ui`;ctx.fillText('CAREER ACHIEVEMENTS',pad,160);ctx.fillStyle='#91a8c2';ctx.font=`500 ${mobile?27:30}px system-ui`;ctx.fillText(d.career+' · Level '+d.level,pad,205);
+  const cols=mobile?2:3, gap=mobile?20:24, cardW=(w-pad*2-gap*(cols-1))/cols, cardH=mobile?150:125;let y=250;
+  const cards=[['FLIGHTS',d.flights],['EARNINGS',d.earnings],['BEST PAYOUT',d.best],['AIRPORTS',d.airports],['DISTANCE',d.miles],['UPGRADES',d.upgrades],['FINAL CASH',d.cash],['XP',d.xp],['FINAL AIRPORT',d.final]];
+  cards.forEach((item,i)=>{const col=i%cols,row=Math.floor(i/cols),x=pad+col*(cardW+gap),yy=y+row*(cardH+gap);ctx.fillStyle='#10243a';ctx.strokeStyle='#294762';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x,yy,cardW,cardH,18);ctx.fill();ctx.stroke();ctx.fillStyle='#91a8c2';ctx.font=`700 ${mobile?21:19}px system-ui`;ctx.fillText(item[0],x+20,yy+35);ctx.fillStyle='#eef7ff';ctx.font=`900 ${mobile?31:28}px system-ui`;wrapCanvasText(ctx,item[1],x+20,yy+82,cardW-40,mobile?35:32);});
+  y+=Math.ceil(cards.length/cols)*(cardH+gap)+30;
+  ctx.fillStyle='#10243a';ctx.strokeStyle='#294762';ctx.beginPath();ctx.roundRect(pad,y,w-pad*2,mobile?170:120,18);ctx.fill();ctx.stroke();ctx.fillStyle='#eef7ff';ctx.font=`800 ${mobile?28:25}px system-ui`;ctx.fillText('ROUTE NETWORK',pad+22,y+40);ctx.fillStyle='#b8c9d8';ctx.font=`500 ${mobile?23:21}px system-ui`;wrapCanvasText(ctx,d.visited,pad+22,y+78,w-pad*2-44,mobile?32:29);y+=mobile?200:150;
+  ctx.fillStyle='#10243a';ctx.strokeStyle='#294762';ctx.beginPath();ctx.roundRect(pad,y,w-pad*2,h-y-60,18);ctx.fill();ctx.stroke();ctx.fillStyle='#eef7ff';ctx.font=`800 ${mobile?28:25}px system-ui`;ctx.fillText('FLIGHTS COMPLETED',pad+22,y+40);ctx.fillStyle='#b8c9d8';ctx.font=`500 ${mobile?21:20}px system-ui`;let fy=y+78;for(const line of d.history){fy=wrapCanvasText(ctx,line,pad+22,fy,w-pad*2-44,mobile?29:27);if(fy>h-85)break;}ctx.fillStyle='#91a8c2';ctx.font=`500 ${mobile?18:18}px system-ui`;ctx.fillText('Flight Tycoon · Career achievement record',pad,h-25);
+  c.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`flight-tycoon-achievement-${mode}.png`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)},'image/png');
+}
+function downloadAchievementMobile(){downloadAchievementImage('mobile')}
+function downloadAchievementPC(){downloadAchievementImage('pc')}
+
+function newCareer(){if(timer)clearInterval(timer);localStorage.removeItem('flightTycoonCareer');$('achievementPage').classList.remove('active');game=null;selectedCareer=-1;$('create').disabled=true;document.querySelectorAll('.career').forEach(x=>x.classList.remove('selected'));showCareer()}
+let deferredInstallPrompt=null; window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;$('installBar').style.display='block'}); $('installApp').addEventListener('click',async()=>{if(!deferredInstallPrompt)return;deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;$('installBar').style.display='none'}); window.addEventListener('appinstalled',()=>{$('installBar').style.display='none'}); if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));} $('create').addEventListener('click',createCareer);$('endCareer').addEventListener('click',endCareer);$('achievementNewCareer').addEventListener('click',newCareer);$('downloadAchievementMobile').addEventListener('click',downloadAchievementMobile);$('downloadAchievementPC').addEventListener('click',downloadAchievementPC);$('search').addEventListener('input',renderRoutes);
+function render(){if(!game)return;const a=ap(game.airport);$('current').textContent=a[0];$('currentName').textContent=a[1]+' · '+a[2];$('stats').innerHTML='<div class="stat"><small>Cash</small><b>'+money(game.cash)+'</b></div><div class="stat"><small>XP</small><b>'+game.xp+'</b></div><div class="stat"><small>Level</small><b>'+game.level+'</b></div><div class="stat"><small>Career</small><b>'+careers[game.career][0]+'</b></div>';renderRoutes();renderUpgrades();if(game.flight)showFlight(Math.min(1,(Date.now()-game.flight.start)/1000/game.flight.duration));else idleFlight()}
+function renderRoutes(){if(!game)return;const q=$('search').value.toLowerCase();const list=(routes[game.airport]||[]).filter(r=>{const a=ap(r[0]);return(a[0]+' '+a[1]+' '+a[2]).toLowerCase().includes(q)});$('routes').innerHTML=list.length?list.map(r=>{const a=ap(r[0]);const f=flightFor(game.airport,a[0],r[1]);return '<div class=\"route\"><div class=\"routeInfo\"><b>'+a[0]+' • '+a[2]+' — '+f.airline+'</b><small>'+a[1]+' · '+formatDuration(f.mins)+' · '+f.number+'</small></div><button '+(game.flight?'disabled':'')+' data-to=\"'+a[0]+'\" data-mins=\"'+f.mins+'\" data-airline=\"'+f.airline+'\" data-number=\"'+f.number+'\">Info</button></div>'}).join(''):'<div class=\"muted\" style=\"padding:12px 0\">No routes from this airport.</div>';document.querySelectorAll('#routes button').forEach(b=>b.addEventListener('click',()=>showFlightInfo(b.dataset.to,Number(b.dataset.mins),b.dataset.airline,b.dataset.number)))}
+function upgradeCost(base,key){const upgradeLevel=game.up[key]||0;return Math.round(base*Math.pow(1.35,Math.max(0,game.level-1))*Math.pow(1.15,upgradeLevel));}
+function renderUpgrades(){const defs=[['range','Network Range','Unlocks additional route options as the network grows.',440],['reliability','Reliability','Reduces the chance of a bad flight result.',715],['premium','Premium Service','Adds 12% per level to successful payouts.',990]];$('upgrades').innerHTML=defs.map(d=>{const cost=upgradeCost(d[3],d[0]);return '<div class="upgrade"><button data-up="'+d[0]+'" data-cost="'+cost+'">'+money(cost)+'</button><b>'+d[1]+' · Lv.'+game.up[d[0]]+'</b><small class="muted">'+d[2]+' Cost increases with your career level.</small></div>';}).join('');document.querySelectorAll('#upgrades button').forEach(b=>b.addEventListener('click',()=>buyUpgrade(b.dataset.up,Number(b.dataset.cost))))}
+function buyUpgrade(k,c){if(game.cash<c)return;game.cash-=c;game.up[k]++;game.stats=game.stats||{};game.stats.upgrades=(game.stats.upgrades||0)+1;save();log('Purchased '+k+' upgrade.');render()}
+function resume(){try{const x=JSON.parse(localStorage.getItem('flightTycoonCareer'));if(!x)return;game=x;showOps();render();if(game.flight){if(Date.now()-game.flight.start>=game.flight.duration*1000)finishFlight();else tick()}}catch(e){localStorage.removeItem('flightTycoonCareer');showCareer()}}
+// Always start at career creation unless the player explicitly chooses Resume by changing this later.
+showCareer();
+</script></body></html>
