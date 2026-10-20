@@ -41,6 +41,7 @@
     .update-timer h2 { margin: 0 0 20px; color: var(--accent); font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.05em; }
     .countdown-display { display: grid; gap: 10px; }
     .countdown-unit { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
+    .countdown-unit[hidden] { display: none; }
     .countdown-unit:last-child { border-bottom: 0; }
     .countdown-value { color: var(--ink); font-size: clamp(2.5rem, 5vw, 3.5rem); font-variant-numeric: tabular-nums; font-weight: 750; line-height: 1; letter-spacing: -.06em; }
     .countdown-label { color: var(--muted); font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
@@ -107,7 +108,8 @@
         <aside class="update-timer" aria-labelledby="updateTimerTitle">
           <h2 id="updateTimerTitle">Next update in:</h2>
           <div class="countdown-display" role="timer" aria-label="Time until the next site update">
-            <div class="countdown-unit"><span class="countdown-value" id="countdownHours">24</span><span class="countdown-label">Hours</span></div>
+            <div class="countdown-unit" id="countdownDaysUnit"><span class="countdown-value" id="countdownDays">3</span><span class="countdown-label" id="countdownDaysLabel">Days</span></div>
+            <div class="countdown-unit" id="countdownHoursUnit" hidden><span class="countdown-value" id="countdownHours">24</span><span class="countdown-label">Hours</span></div>
             <div class="countdown-unit"><span class="countdown-value" id="countdownMinutes">00</span><span class="countdown-label">Minutes</span></div>
             <div class="countdown-unit"><span class="countdown-value" id="countdownSeconds">00</span><span class="countdown-label">Seconds</span></div>
           </div>
@@ -119,8 +121,8 @@
 
   <script>
     (() => {
-      const targetHour = 18;
-      const targetMinute = 10;
+      const targetHour = 9;
+      const targetMinute = 0;
       const madridTime = new Intl.DateTimeFormat('en-GB', {
         timeZone: 'Europe/Madrid',
         year: 'numeric',
@@ -132,6 +134,10 @@
         hourCycle: 'h23'
       });
       const elements = {
+        daysUnit: document.getElementById('countdownDaysUnit'),
+        days: document.getElementById('countdownDays'),
+        daysLabel: document.getElementById('countdownDaysLabel'),
+        hoursUnit: document.getElementById('countdownHoursUnit'),
         hours: document.getElementById('countdownHours'),
         minutes: document.getElementById('countdownMinutes'),
         seconds: document.getElementById('countdownSeconds')
@@ -156,17 +162,21 @@
         return timestamp;
       }
 
-      function nextUpdateTimestamp(now) {
-        const localToday = madridParts(now);
-        const tomorrow = new Date(Date.UTC(localToday.year, localToday.month - 1, localToday.day + 1));
-        return madridTimeToTimestamp(tomorrow.getUTCFullYear(), tomorrow.getUTCMonth() + 1, tomorrow.getUTCDate());
-      }
-
-      const deadline = nextUpdateTimestamp(Date.now());
+      const deadline = madridTimeToTimestamp(2026, 10, 24);
 
       function updateCountdown() {
         const remainingSeconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
-        elements.hours.textContent = String(Math.floor(remainingSeconds / 3600)).padStart(2, '0');
+        const showDays = remainingSeconds > 24 * 60 * 60;
+        const days = Math.floor(remainingSeconds / (24 * 60 * 60));
+
+        elements.daysUnit.hidden = !showDays;
+        elements.hoursUnit.hidden = false;
+        elements.days.textContent = String(days);
+        elements.daysLabel.textContent = days === 1 ? 'Day' : 'Days';
+        const hours = showDays
+          ? Math.floor((remainingSeconds % (24 * 60 * 60)) / 3600)
+          : Math.floor(remainingSeconds / 3600);
+        elements.hours.textContent = String(hours).padStart(2, '0');
         elements.minutes.textContent = String(Math.floor((remainingSeconds % 3600) / 60)).padStart(2, '0');
         elements.seconds.textContent = String(remainingSeconds % 60).padStart(2, '0');
       }
