@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Personal homepage of Bernat Pedro.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="index-background-halloween.css">
   <title>Bernat Pedro</title>
   <style>
-    :root { color-scheme: dark; --ink: #f6f7fb; --muted: #aeb6c9; --line: rgba(255,255,255,.14); --accent: #ffcf5a; }
+    :root { color-scheme: dark; --ink: #f6f7fb; --muted: #c0b5ca; --line: rgba(255,255,255,.16); --accent: #ff9a3c; }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); background: #090c16; }
-    body::before { content: ""; position: fixed; inset: 0; z-index: -2; background: radial-gradient(circle at 72% 20%, #2d4275 0, #151d36 27%, #090c16 68%); }
-    body::after { content: ""; position: fixed; inset: 0; z-index: -1; opacity: .35; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 84px 84px; mask-image: linear-gradient(to bottom, #000, transparent 80%); }
+    body { margin: 0; min-height: 100vh; overflow-x: hidden; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: var(--ink); }
     .shell { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
     header { display: flex; align-items: center; justify-content: space-between; padding: 25px 0; }
     .brand { color: inherit; font-weight: 750; letter-spacing: -.03em; text-decoration: none; }
@@ -25,19 +24,23 @@
     .home-layout { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 280px); align-items: center; gap: clamp(30px, 6vw, 80px); }
     .hero { width: 100%; }
     .eyebrow { margin: 0 0 20px; color: var(--accent); font-size: .82rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .hero-kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .hero-kicker .eyebrow { margin: 0; }
+    .countdown-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,154,60,.5); border-radius: 999px; padding: 7px 11px; color: #ffe0c0; background: rgba(255,116,31,.12); font-size: .74rem; font-weight: 750; letter-spacing: .03em; text-decoration: none; transition: background .2s, border-color .2s, transform .2s; }
+    .countdown-link:hover, .countdown-link:focus-visible { transform: translateY(-1px); border-color: var(--accent); background: rgba(255,116,31,.24); outline: 2px solid rgba(255,154,60,.4); outline-offset: 2px; }
     h1 { max-width: 760px; margin: 0; font-size: clamp(3.2rem, 10vw, 7.3rem); line-height: .93; letter-spacing: -.075em; }
     .intro { max-width: 570px; margin: 27px 0 35px; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.25rem); line-height: 1.6; }
     .links { display: flex; flex-wrap: wrap; gap: 12px; }
     .button { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 999px; padding: 13px 19px; color: var(--ink); text-decoration: none; font-weight: 700; transition: transform .2s, background .2s, border-color .2s; }
     .button:hover, .button:focus-visible { transform: translateY(-2px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.32); outline: 0; }
     .button.primary { color: #17120a; background: var(--accent); border-color: var(--accent); }
-    .button.primary:hover, .button.primary:focus-visible { background: #ffe09a; }
+    .button.primary:hover, .button.primary:focus-visible { background: #ffb66f; }
     .feature { position: relative; margin-top: 70px; padding: 23px 25px; border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(125deg, rgba(255,255,255,.1), rgba(255,255,255,.025)); backdrop-filter: blur(8px); text-decoration: none; color: inherit; display: flex; justify-content: space-between; gap: 20px; align-items: center; transition: border-color .2s, transform .2s; }
-    .feature:hover, .feature:focus-visible { border-color: rgba(255,207,90,.65); transform: translateY(-3px); outline: 0; }
+    .feature:hover, .feature:focus-visible { border-color: rgba(255,154,60,.75); transform: translateY(-3px); outline: 0; }
     .feature small { display: block; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
     .feature strong { font-size: 1.15rem; }
     .arrow { font-size: 1.6rem; color: var(--accent); }
-    .update-timer { padding: 25px; border: 1px solid rgba(255,207,90,.3); border-radius: 22px; background: linear-gradient(145deg, rgba(255,207,90,.1), rgba(255,255,255,.025)); box-shadow: 0 14px 40px rgba(0,0,0,.2); }
+    .update-timer { padding: 25px; border: 1px solid rgba(255,154,60,.38); border-radius: 22px; background: linear-gradient(145deg, rgba(255,116,31,.14), rgba(255,255,255,.035)); box-shadow: 0 14px 40px rgba(0,0,0,.2); }
     .update-timer h2 { margin: 0 0 20px; color: var(--accent); font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.05; letter-spacing: -.05em; }
     .countdown-display { display: grid; gap: 10px; }
     .countdown-unit { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); }
@@ -56,10 +59,10 @@
     .field { display: grid; gap: 8px; }
     .field label, .field span { color: var(--muted); font-size: .9rem; font-weight: 600; }
     .field input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(15,20,32,.9); color: var(--ink); font: inherit; }
-    .field input:focus { outline: 2px solid rgba(255,207,90,.44); border-color: rgba(255,207,90,.7); }
+    .field input:focus { outline: 2px solid rgba(255,154,60,.44); border-color: rgba(255,154,60,.7); }
     .search-results { display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; margin-top: 8px; }
-    .search-pill { border: 1px solid rgba(255,207,90,.55); color: var(--ink); background: rgba(255,207,90,.12); border-radius: 999px; padding: 7px 12px; font-size: .84rem; cursor: pointer; }
-    .search-pill:hover, .search-pill:focus-visible { background: rgba(255,207,90,.2); outline: none; }
+    .search-pill { border: 1px solid rgba(255,154,60,.55); color: var(--ink); background: rgba(255,154,60,.12); border-radius: 999px; padding: 7px 12px; font-size: .84rem; cursor: pointer; }
+    .search-pill:hover, .search-pill:focus-visible { background: rgba(255,154,60,.2); outline: none; }
     .meta-note { color: var(--muted); font-size: .82rem; }
     .logger-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
     .button.secondary { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
@@ -79,6 +82,60 @@
   </style>
 </head>
 <body>
+  <div class="halloween-scene" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="moonGlow">
+          <stop stop-color="#fff5ce" stop-opacity=".95"/>
+          <stop offset=".3" stop-color="#ffbf68" stop-opacity=".8"/>
+          <stop offset="1" stop-color="#ff8c35" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="moonSurface" x2=".8" y2="1">
+          <stop stop-color="#fff4cc"/>
+          <stop offset="1" stop-color="#ffad55"/>
+        </linearGradient>
+      </defs>
+      <circle cx="1130" cy="210" r="205" fill="url(#moonGlow)"/>
+      <circle cx="1130" cy="210" r="91" fill="url(#moonSurface)"/>
+      <g fill="#e7a65b" opacity=".22">
+        <circle cx="1100" cy="180" r="15"/>
+        <circle cx="1162" cy="228" r="22"/>
+        <circle cx="1114" cy="251" r="9"/>
+      </g>
+      <g fill="#090611">
+        <path d="M0 690 0 635 34 635 34 590 71 590 71 651 99 651 99 610 133 610 133 672 165 672 165 625 202 625 202 580 220 580 239 625 260 625 260 690Z"/>
+        <path d="M190 692 190 630 232 630 232 568 282 568 282 530 329 568 329 617 369 617 369 684Z"/>
+        <path d="M1034 688 1034 620 1081 620 1081 571 1119 571 1119 625 1155 625 1155 585 1192 585 1192 644 1230 644 1230 607 1264 607 1264 674 1304 674 1304 620 1340 620 1340 575 1360 575 1379 620 1401 620 1401 666 1440 666 1440 700Z"/>
+        <path d="M410 700 410 622 444 622 444 590 470 622 470 700ZM944 700 944 638 970 638 970 603 997 638 997 700Z"/>
+      </g>
+      <g fill="#ff9a3c" opacity=".8">
+        <path d="M255 638h18v27h-18zm42 0h18v27h-18zm-22 49h20v22h-20z"/>
+        <path d="M1095 632h17v24h-17zm47 20h17v24h-17zm48-31h17v24h-17z"/>
+      </g>
+      <g fill="#08050d">
+        <path d="M470 330c-27-36-55-39-85-7 32-8 49 1 61 19-23-8-43-3-60 17 30-7 53 1 68 19 11-22 31-31 63-27-18-18-38-25-61-21 7-10 12-10 14 0Z"/>
+        <path d="M767 410c-18-24-36-26-56-5 21-5 32 1 40 13-15-6-28-2-39 11 19-5 34 0 44 12 7-14 20-20 41-17-12-12-25-16-40-14 5-7 8-7 10 0Z"/>
+        <path d="M951 350c-14-19-29-21-45-4 17-4 26 1 32 10-12-4-22-1-31 9 15-4 27 0 35 10 6-11 16-16 33-14-10-9-20-13-32-11 4-6 7-6 8 0Z"/>
+      </g>
+      <g fill="none" stroke="#dac8e8" stroke-opacity=".28" stroke-width="2">
+        <path d="M0 0v155m0-155 155 155M0 40l115 115M0 80l75 75M40 0 0 40m80-40L0 80m120-120L0 120"/>
+        <path d="M1440 0v155m0-155-155 155m155-115-115 115m115-75-75 75m-40-155 40 40m-80-40 80 80m-120-120 120 120"/>
+      </g>
+      <path d="M0 785c180-65 347-32 510 14s316 30 483-23 299-53 447 7v117H0Z" fill="#08050d"/>
+      <g transform="translate(716 766)" fill="#ff8b2e" stroke="#130a18" stroke-width="7">
+        <path d="M0 28c-25-30-68-10-61 24-23 35 10 70 40 58 16 24 48 24 64 0 31 12 63-23 40-58 7-34-36-54-61-24-7-10-15-10-22 0Z"/>
+        <path d="M21 5c-2-20 8-28 25-30-2 17-10 27-25 30Z" fill="#638047"/>
+        <path d="m-31 62 18 2-9 12Zm63 0 18 2-9 12Z" fill="#ffe1a0" stroke="none"/>
+        <path d="M-19 91q19 15 38 0" fill="none" stroke="#35131a" stroke-width="5"/>
+      </g>
+      <g transform="translate(1322 803) scale(.67)" fill="#ff8b2e" stroke="#130a18" stroke-width="8">
+        <path d="M0 28c-25-30-68-10-61 24-23 35 10 70 40 58 16 24 48 24 64 0 31 12 63-23 40-58 7-34-36-54-61-24-7-10-15-10-22 0Z"/>
+        <path d="M21 5c-2-20 8-28 25-30-2 17-10 27-25 30Z" fill="#638047"/>
+        <path d="m-31 62 18 2-9 12Zm63 0 18 2-9 12Z" fill="#ffe1a0" stroke="none"/>
+        <path d="M-19 91q19 15 38 0" fill="none" stroke="#35131a" stroke-width="7"/>
+      </g>
+    </svg>
+  </div>
   <div class="shell">
     <header>
       <a class="brand" href="index.html">Bernat Pedro</a>
@@ -91,7 +148,10 @@
     <main>
       <div class="home-layout">
         <section class="hero" aria-labelledby="welcome">
-          <p class="eyebrow">Personal website</p>
+          <div class="hero-kicker">
+            <p class="eyebrow">A little spooky corner from the web</p>
+            <a class="countdown-link" href="halloween-countdown.html">🎃 Countdown to Halloween</a>
+          </div>
           <h1 id="welcome">Hello, I’m<br>Bernat.</h1>
           <p class="intro">A small corner of the web for projects, experiments, and things worth sharing.</p>
           <div class="links">

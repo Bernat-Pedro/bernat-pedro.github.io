@@ -1,0 +1,22 @@
+body {
+  background: #090c16;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(circle at 72% 20%, #2d4275 0, #151d36 27%, #090c16 68%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: .35;
+  background-image: radial-gradient(#fff 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: linear-gradient(to bottom, #000, transparent 80%);
+}

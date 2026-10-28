@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon-halloween.svg" type="image/svg+xml">
+<title>Halloween · Countdown</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#120b19;
+  --panel:#21152b;
+  --orange:#ff9a48;
+  --text:#f9f4fc;
+  --muted:#aa9ab7;
+  --line:#ffffff14;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  font-family:"Outfit",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(ellipse at 50% 0%,#452451 0%,transparent 55%),
+    var(--bg);
+}
+
+main{
+  width:100%;
+  max-width:1040px;
+  margin:auto;
+}
+
+header{text-align:center;margin-bottom:30px}
+
+.tag{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  color:var(--orange);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  padding:8px 13px;
+  border:1px solid #ff9a4830;
+  border-radius:30px;
+  background:#ff9a4809;
+}
+
+h1{
+  font-size:clamp(34px,5vw,58px);
+  letter-spacing:-2px;
+  line-height:1.05;
+  margin:19px 0 10px;
+  font-weight:800;
+}
+
+h1 span{color:var(--orange)}
+
+.subtitle{
+  color:var(--muted);
+  font-size:16px;
+  margin:0;
+}
+
+.panel{
+  background:linear-gradient(145deg,#ffffff09,#ffffff03);
+  border:1px solid var(--line);
+  border-radius:25px;
+  padding:clamp(22px,4vw,42px);
+  box-shadow:0 25px 75px #0003,inset 0 1px #ffffff09;
+}
+
+.section-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  text-align:center;
+}
+
+.countdown{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin:24px 0;
+}
+
+.time{
+  background:#100a16a8;
+  border:1px solid var(--line);
+  border-radius:17px;
+  padding:24px 6px 20px;
+  text-align:center;
+}
+
+.digit{
+  font-family:"DM Mono",monospace;
+  font-size:clamp(30px,5.2vw,57px);
+  font-weight:500;
+  letter-spacing:-2px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+  color:#fff8ef;
+  text-shadow:0 0 28px #ff9a4815;
+}
+
+.unit{
+  margin-top:12px;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2px;
+  color:var(--orange);
+  text-transform:uppercase;
+}
+
+.date{
+  text-align:center;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.date strong{color:var(--text);font-weight:600}
+
+.hidden{display:none!important}
+
+.tracker-heading{
+  text-align:center;
+  font-size:32px;
+  margin:0 0 8px;
+  letter-spacing:-1px;
+}
+
+.tracker-intro{
+  text-align:center;
+  color:var(--muted);
+  margin:0 0 26px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.stat{
+  background:#100a16a8;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:22px 12px;
+  text-align:center;
+}
+
+.stat h2{
+  font-size:14px;
+  font-weight:600;
+  color:var(--muted);
+  margin:0 0 15px;
+}
+
+.value{
+  font-family:"DM Mono",monospace;
+  font-size:52px;
+  font-weight:500;
+  letter-spacing:-2px;
+  color:var(--orange);
+  font-variant-numeric:tabular-nums;
+}
+
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  margin-top:15px;
+}
+
+button{
+  font-family:"Outfit",sans-serif;
+  cursor:pointer;
+  font-weight:700;
+  transition:background .15s,transform .15s;
+}
+
+button:hover{transform:translateY(-1px)}
+button:active{transform:scale(.97)}
+
+.adjust{
+  width:43px;
+  height:40px;
+  border-radius:12px;
+  color:var(--text);
+  background:#ffffff0b;
+  border:1px solid #ffffff1b;
+  font-size:22px;
+}
+
+.adjust:hover{background:#ffffff17}
+
+.primary{
+  display:block;
+  margin:0 auto;
+  padding:14px 22px;
+  border:0;
+  border-radius:12px;
+  background:var(--orange);
+  color:#24132e;
+  font-size:14px;
+  box-shadow:0 8px 25px #ff9a4819;
+}
+
+.primary:hover{background:#ffad69}
+
+.note{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin:16px 0 0;
+}
+
+footer{
+  text-align:center;
+  margin-top:20px;
+  color:#84728f;
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+@media(max-width:520px){
+  body{padding:16px}
+  header{margin-bottom:22px}
+  .countdown{gap:7px;margin:20px 0}
+  .time{padding:20px 2px 16px;border-radius:13px}
+  .digit{font-size:clamp(24px,7vw,36px);letter-spacing:-1.5px}
+  .unit{font-size:9px;letter-spacing:1px}
+  .panel{padding:20px 13px;border-radius:19px}
+  .stats{gap:8px}
+  .stat{padding:18px 5px}
+  .value{font-size:40px}
+  .stat h2{font-size:12px}
+  h1{letter-spacing:-1.5px}
+}
+
+@media(prefers-reduced-motion:no-preference){
+  .panel{animation:appear .45s ease-out}
+  @keyframes appear{
+    from{opacity:0;transform:translateY(8px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+}
+</style>
+</head>
+
+<body>
+<main>
+  <header>
+    <div class="tag">✦ October 31 · Halloween</div>
+    <h1>Halloween <span>Countdown</span></h1>
+    <p class="subtitle">The night of tricks, treats &amp; spooky surprises.</p>
+  </header>
+
+  <section class="panel">
+    <div id="waiting">
+      <div class="section-label">Time until Halloween night</div>
+
+      <div class="countdown">
+        <div class="time">
+          <div class="digit" id="days">00</div>
+          <div class="unit">Days</div>
+        </div>
+        <div class="time">
+          <div class="digit" id="hours">00</div>
+          <div class="unit">Hours</div>
+        </div>
+        <div class="time">
+          <div class="digit" id="minutes">00</div>
+          <div class="unit">Minutes</div>
+        </div>
+        <div class="time">
+          <div class="digit" id="seconds">00</div>
+          <div class="unit">Seconds</div>
+        </div>
+      </div>
+
+      <div class="date">
+        Unlocks <strong>October 31, 2026 · 8:15 PM</strong>
+        · Mainland Spain
+      </div>
+    </div>
+
+    <div id="tracker" class="hidden">
+      <h2 class="tracker-heading">Happy Halloween 🎃</h2>
+      <p class="tracker-intro">Your trick-or-treating stats, all in one place.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <h2>🏠 Houses visited</h2>
+          <div class="value" id="houses">0</div>
+          <div class="controls">
+            <button class="adjust" onclick="change('houses',-1)" aria-label="Remove house">−</button>
+            <button class="adjust" onclick="change('houses',1)" aria-label="Add house">+</button>
+          </div>
+        </div>
+
+        <div class="stat">
+          <h2>🍬 Candies collected</h2>
+          <div class="value" id="candy">0</div>
+          <div class="controls">
+            <button class="adjust" onclick="change('candy',-1)" aria-label="Remove candy">−</button>
+            <button class="adjust" onclick="change('candy',1)" aria-label="Add candy">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="primary" onclick="downloadResume()">
+        ↓ &nbsp; Download Halloween résumé
+      </button>
+      <p class="note">Downloads a PNG image with your final totals.</p>
+    </div>
+  </section>
+
+  <footer>HAVE A SPOOKY NIGHT ✦</footer>
+</main>
+
+<script>
+const target = new Date(2026,9,31,20,15,0);
+let houses = 0;
+let candy = 0;
+
+function update(){
+  const diff = target.getTime() - Date.now();
+
+  if(diff <= 0){
+    document.getElementById("waiting").classList.add("hidden");
+    document.getElementById("tracker").classList.remove("hidden");
+    return;
+  }
+
+  document.getElementById("days").textContent =
+    String(Math.floor(diff/86400000)).padStart(2,"0");
+  document.getElementById("hours").textContent =
+    String(Math.floor(diff%86400000/3600000)).padStart(2,"0");
+  document.getElementById("minutes").textContent =
+    String(Math.floor(diff%3600000/60000)).padStart(2,"0");
+  document.getElementById("seconds").textContent =
+    String(Math.floor(diff%60000/1000)).padStart(2,"0");
+}
+
+function change(type,amount){
+  if(type==="houses"){
+    houses=Math.max(0,houses+amount);
+    document.getElementById("houses").textContent=houses;
+  }else{
+    candy=Math.max(0,candy+amount);
+    document.getElementById("candy").textContent=candy;
+  }
+}
+
+function downloadResume(){
+  const canvas=document.createElement("canvas");
+  canvas.width=1100;
+  canvas.height=760;
+  const ctx=canvas.getContext("2d");
+
+  const gradient=ctx.createLinearGradient(0,0,1100,760);
+  gradient.addColorStop(0,"#452451");
+  gradient.addColorStop(1,"#120b19");
+  ctx.fillStyle=gradient;
+  ctx.fillRect(0,0,1100,760);
+
+  ctx.strokeStyle="#ff9a48";
+  ctx.lineWidth=5;
+  ctx.strokeRect(25,25,1050,710);
+  ctx.textAlign="center";
+
+  ctx.fillStyle="#ff9a48";
+  ctx.font="bold 54px Arial";
+  ctx.fillText("HALLOWEEN RÉSUMÉ",550,130);
+
+  ctx.fillStyle="#c7b4d8";
+  ctx.font="24px Arial";
+  ctx.fillText("October 31, 2026 · Trick-or-treating stats",550,185);
+
+  ctx.fillStyle="#ff9a48";
+  ctx.font="bold 30px Arial";
+  ctx.fillText("HOUSES VISITED",550,300);
+
+  ctx.fillStyle="#fff8ff";
+  ctx.font="56px monospace";
+  ctx.fillText(String(houses),550,370);
+
+  ctx.fillStyle="#ff9a48";
+  ctx.font="bold 30px Arial";
+  ctx.fillText("CANDIES COLLECTED",550,475);
+
+  ctx.fillStyle="#fff8ff";
+  ctx.font="56px monospace";
+  ctx.fillText(String(candy),550,545);
+
+  ctx.fillStyle="#c7b4d8";
+  ctx.font="23px Arial";
+  ctx.fillText("Spooky night. Sweet memories.",550,650);
+
+  canvas.toBlob(blob=>{
+    if(!blob){alert("Could not create your résumé.");return;}
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement("a");
+    link.href=url;
+    link.download="halloween-resume.png";
+    link.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+  },"image/png");
+}
+
+update();
+setInterval(update,250);
+</script>
+</body>
+</html>
