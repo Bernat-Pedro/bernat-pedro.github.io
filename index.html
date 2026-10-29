@@ -49,36 +49,11 @@
     .countdown-value { color: var(--ink); font-size: clamp(2.5rem, 5vw, 3.5rem); font-variant-numeric: tabular-nums; font-weight: 750; line-height: 1; letter-spacing: -.06em; }
     .countdown-label { color: var(--muted); font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 
-    .logger-panel { margin-top: 44px; padding: 24px; border: 1px solid var(--line); border-radius: 24px; background: rgba(12, 16, 30, 0.74); box-shadow: 0 14px 40px rgba(0,0,0,.25); }
-    .logger-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
-    .logger-header h2 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -.05em; }
-    .user-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
-    .logger-auth, .logger-app { display: grid; gap: 18px; }
-    .logger-card { padding: 22px; border-radius: 18px; border: 1px solid var(--line); background: rgba(255,255,255,.02); }
-    .logger-form { display: grid; gap: 16px; }
-    .field { display: grid; gap: 8px; }
-    .field label, .field span { color: var(--muted); font-size: .9rem; font-weight: 600; }
-    .field input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.12); background: rgba(15,20,32,.9); color: var(--ink); font: inherit; }
-    .field input:focus { outline: 2px solid rgba(255,154,60,.44); border-color: rgba(255,154,60,.7); }
-    .search-results { display: flex; flex-wrap: wrap; gap: 8px; min-height: 38px; margin-top: 8px; }
-    .search-pill { border: 1px solid rgba(255,154,60,.55); color: var(--ink); background: rgba(255,154,60,.12); border-radius: 999px; padding: 7px 12px; font-size: .84rem; cursor: pointer; }
-    .search-pill:hover, .search-pill:focus-visible { background: rgba(255,154,60,.2); outline: none; }
-    .meta-note { color: var(--muted); font-size: .82rem; }
-    .logger-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-    .button.secondary { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.14); }
-    .status-message { min-height: 1.2em; color: var(--accent); font-size: .92rem; }
-    .status-message.error { color: #ff9a9a; }
-    .entries-panel { margin-top: 20px; }
-    .entries-panel h3 { margin: 0 0 16px; font-size: 1.2rem; }
-    .entry-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-    .entry-item { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,255,255,.02); }
-    .entry-item strong { display: block; font-size: 1.05rem; }
-    .entry-item span { color: var(--muted); display: block; margin-top: 4px; }
-    .entry-meta { display: grid; gap: 4px; text-align: right; color: var(--muted); font-size: .82rem; }
-    .empty-state { padding: 16px; border: 1px dashed var(--line); border-radius: 14px; color: var(--muted); }
+    .math-games { margin: 36px 0 54px; padding: 26px; border: 1px solid var(--line); border-radius: 24px; background: rgba(12, 16, 30, 0.74); }
+    .math-games h2 { margin: 0 0 18px; font-size: clamp(1.75rem, 4vw, 2.5rem); letter-spacing: -.05em; }
     footer { padding: 0 0 28px; color: #7e879d; font-size: .88rem; }
     @media (max-width: 760px) { .home-layout { grid-template-columns: 1fr; } .update-timer { width: min(100%, 360px); } }
-    @media (max-width: 520px) { .shell { width: min(100% - 28px, 1120px); } header { padding: 18px 0; } nav a { padding: 8px 10px; } main { padding-top: 36px; } .feature { margin-top: 50px; padding: 19px; } .logger-panel { padding: 18px; } .entry-item { display: grid; } .entry-meta { text-align: left; } }
+    @media (max-width: 520px) { .shell { width: min(100% - 28px, 1120px); } header { padding: 18px 0; } nav a { padding: 8px 10px; } main { padding-top: 36px; } .feature { margin-top: 50px; padding: 19px; } .math-games { padding: 19px; } }
   </style>
 </head>
 <body>
@@ -142,7 +117,7 @@
       <nav aria-label="Main navigation">
         <a href="index.html" aria-current="page">Home</a>
         <a href="eclipse.html">Eclipse</a>
-        <button id="homeLogoutBtn" type="button">Log out</button>
+        <a href="#math-games">Math</a>
       </nav>
     </header>
     <main>
@@ -176,6 +151,10 @@
         </aside>
       </div>
     </main>
+    <section class="math-games" id="math-games" aria-labelledby="math-games-heading">
+      <h2 id="math-games-heading">Math Games</h2>
+      <a class="button primary" href="math-escape-room.html">Escape Facility 007</a>
+    </section>
     <footer>© 2026 Bernat Pedro</footer>
   </div>
 
@@ -294,17 +273,10 @@
       ];
 
       const STORAGE_KEYS = {
-        user: 'airplane-logger-user',
         entries: 'airplane-logger-entries'
       };
 
       const elements = {
-        loginView: document.getElementById('loginView'),
-        appView: document.getElementById('appView'),
-        loginForm: document.getElementById('loginForm'),
-        usernameInput: document.getElementById('usernameInput'),
-        userBadge: document.getElementById('userBadge'),
-        currentUserLabel: document.getElementById('currentUserLabel'),
         registrationInput: document.getElementById('registrationInput'),
         operatorInput: document.getElementById('operatorInput'),
         sightingDate: document.getElementById('sightingDate'),
@@ -312,13 +284,11 @@
         searchResults: document.getElementById('searchResults'),
         entriesList: document.getElementById('entriesList'),
         saveEntryBtn: document.getElementById('saveEntryBtn'),
-        logoutBtn: document.getElementById('logoutBtn'),
         statusMessage: document.getElementById('statusMessage')
       };
 
-      if (!elements.loginForm) return;
+      if (!elements.registrationInput) return;
 
-      let currentUser = localStorage.getItem(STORAGE_KEYS.user) || '';
       let entries = readEntries();
 
       function readEntries() {
@@ -338,10 +308,6 @@
       function setStatus(message, isError = false) {
         elements.statusMessage.textContent = message;
         elements.statusMessage.classList.toggle('error', isError);
-      }
-
-      function isValidGmailAddress(value) {
-        return /^[a-zA-Z0-9._%+\-]+@gmail\.com$/i.test(String(value || '').trim());
       }
 
       function escapeHtml(value) {
@@ -424,44 +390,6 @@
         }).join('');
       }
 
-      function showApp() {
-        elements.loginView.hidden = true;
-        elements.appView.hidden = false;
-        elements.userBadge.hidden = false;
-        elements.currentUserLabel.textContent = currentUser;
-        setStatus('');
-        renderEntries();
-      }
-
-      function showLogin() {
-        elements.loginView.hidden = false;
-        elements.appView.hidden = true;
-        elements.userBadge.hidden = true;
-        setStatus('');
-      }
-
-      function handleLogin(event) {
-        event.preventDefault();
-        const username = String(elements.usernameInput.value).trim();
-
-        if (!isValidGmailAddress(username)) {
-          setStatus('Please enter a valid Gmail address ending in @gmail.com.', true);
-          elements.usernameInput.focus();
-          return;
-        }
-
-        currentUser = username.toLowerCase();
-        localStorage.setItem(STORAGE_KEYS.user, currentUser);
-        elements.usernameInput.value = '';
-        showApp();
-      }
-
-      function handleLogout() {
-        currentUser = '';
-        localStorage.removeItem(STORAGE_KEYS.user);
-        showLogin();
-      }
-
       function handleSaveEntry() {
         const registration = normalizeRegistration(elements.registrationInput.value);
         const operator = elements.operatorInput.value.trim();
@@ -479,7 +407,6 @@
 
         const entry = {
           id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-          user: currentUser,
           registration,
           operator: finalOperator,
           date: date || new Date().toISOString().slice(0, 10),
@@ -498,8 +425,6 @@
         setStatus(`Logged ${registration} for ${finalOperator}.`);
       }
 
-      elements.loginForm.addEventListener('submit', handleLogin);
-      elements.logoutBtn.addEventListener('click', handleLogout);
       elements.saveEntryBtn.addEventListener('click', handleSaveEntry);
       elements.registrationInput.addEventListener('input', updateSearchResults);
       elements.registrationInput.addEventListener('blur', () => {
@@ -519,23 +444,8 @@
         elements.searchResults.innerHTML = '';
       });
 
-      if (currentUser) {
-        showApp();
-      } else {
-        showLogin();
-      }
-
       seedDateTime();
       renderEntries();
-    })();
-  </script>
-  <script>
-    (() => {
-      const logoutButton = document.getElementById('homeLogoutBtn');
-      logoutButton.addEventListener('click', () => {
-        sessionStorage.removeItem('google-user-email');
-        window.location.reload();
-      });
     })();
   </script>
 </body>

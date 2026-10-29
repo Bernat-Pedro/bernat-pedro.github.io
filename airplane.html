@@ -120,15 +120,6 @@
       letter-spacing: -0.06em;
     }
 
-    .user-tag {
-      padding: 9px 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,0.03);
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
     .grid {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -304,14 +295,12 @@
       <nav class="nav" aria-label="Main navigation">
         <a href="index.html">Home</a>
         <a href="eclipse.html">Eclipse</a>
-        <button id="logoutBtn" type="button" class="secondaryBtn">Log out</button>
       </nav>
     </header>
 
     <main id="app" class="app" aria-live="polite">
       <div class="hero">
         <h1>Airplane sightings</h1>
-        <div id="userTag" class="user-tag">Signed in as guest</div>
       </div>
 
       <div class="grid">
@@ -358,9 +347,7 @@
 
   <script>
     (() => {
-      const GMAIL_RE = /^[a-z0-9._%+\-]+@gmail\.com$/i;
       const STORAGE_KEYS = {
-        googleUser: 'google-user-email',
         logs: 'airplane-logger-database',
         registry: 'airplane-logger-faa-registry',
         airlineRegistry: 'airplane-logger-airline-registry'
@@ -415,8 +402,6 @@
 
       const elements = {
         app: document.getElementById('app'),
-        userTag: document.getElementById('userTag'),
-        logoutBtn: document.getElementById('logoutBtn'),
         registrationInput: document.getElementById('registrationInput'),
         operatorInput: document.getElementById('operatorInput'),
         commentInput: document.getElementById('commentInput'),
@@ -428,7 +413,7 @@
         entriesList: document.getElementById('entriesList')
       };
 
-      let currentUser = '';
+      const currentUser = 'local';
       let entries = [];
       let searchTimer = null;
       let searchController = null;
@@ -438,32 +423,19 @@
       let airlineRegistryRows = null;
       let airlineRegistryPromise = null;
 
-      function getCurrentUser() {
-          const user = sessionStorage.getItem(STORAGE_KEYS.googleUser);
-        return user && GMAIL_RE.test(user) ? user.toLowerCase() : '';
-      }
-
       function readEntries() {
         try {
           const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.logs) || '{}');
-          if (saved && saved.version === 1 && saved.sightingsByUser) {
-            return saved.sightingsByUser;
-          }
-
-          // Migrate the earlier unversioned per-user log object once.
-          if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
-            const migrated = { ...saved };
-            localStorage.setItem(STORAGE_KEYS.logs, JSON.stringify({
-              version: 1,
-              createdAt: new Date().toISOString(),
-              sightingsByUser: migrated
-            }));
-            return migrated;
-          }
+          const sightingsByUser = saved?.version === 1 && saved.sightingsByUser
+            ? saved.sightingsByUser
+            : saved;
+          if (!sightingsByUser || typeof sightingsByUser !== 'object' || Array.isArray(sightingsByUser)) return {};
+          return {
+            [currentUser]: Object.values(sightingsByUser).flatMap((list) => Array.isArray(list) ? list : [])
+          };
         } catch (error) {
           return {};
         }
-        return {};
       }
 
       function persistEntries() {
@@ -778,15 +750,7 @@
 
       function showApp() {
         elements.app.classList.add('active');
-        elements.userTag.textContent = `Signed in as ${currentUser}`;
-        elements.logoutBtn.style.display = 'inline-flex';
         renderEntries();
-      }
-
-      function handleLogout() {
-        currentUser = '';
-          sessionStorage.removeItem(STORAGE_KEYS.googleUser);
-        window.location.replace('login.html?next=airplane.html');
       }
 
       async function handleSaveEntry() {
@@ -854,7 +818,6 @@
         setStatus('Saved log deleted.');
       }
 
-      elements.logoutBtn.addEventListener('click', handleLogout);
       elements.saveEntryBtn.addEventListener('click', handleSaveEntry);
       elements.entriesList.addEventListener('click', handleDeleteEntry);
       elements.registrationInput.addEventListener('input', () => {
@@ -875,14 +838,7 @@
         elements.searchResults.innerHTML = '';
       });
 
-      currentUser = getCurrentUser();
       entries = readEntries();
-
-      if (!currentUser) {
-        window.location.replace('login.html?next=airplane.html');
-        return;
-      }
-
       showApp();
 
       seedDateTime();
