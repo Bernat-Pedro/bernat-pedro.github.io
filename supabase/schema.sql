@@ -39,6 +39,7 @@ create table if not exists public.events (
   starts_at timestamptz not null,
   ends_at timestamptz,
   all_day boolean not null default false,
+  visibility text not null default 'friends' check (visibility in ('private', 'friends')),
   description text check (description is null or length(description) <= 1000),
   location text check (location is null or length(location) <= 200),
   photo_path text,
@@ -46,6 +47,17 @@ create table if not exists public.events (
   updated_at timestamptz not null default now(),
   constraint event_time_order check ((all_day and ends_at is null) or (not all_day and ends_at > starts_at))
 );
+alter table public.events add column if not exists visibility text not null default 'friends';
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'events_visibility_check' and conrelid = 'public.events'::regclass
+  ) then
+    alter table public.events add constraint events_visibility_check check (visibility in ('private', 'friends'));
+  end if;
+end;
+$$;
 create index if not exists events_creator_date_idx on public.events (creator_id, event_date);
 create index if not exists events_starts_at_idx on public.events (starts_at);
 
@@ -189,11 +201,11 @@ create policy "Friends can see their relationship" on public.friendships for sel
 
 drop policy if exists "Events visible to creator and accepted friends" on public.events;
 create policy "Events visible to creator and accepted friends" on public.events for select to authenticated using (
-  creator_id = auth.uid() or exists (
+  creator_id = auth.uid() or (visibility = 'friends' and exists (
     select 1 from public.friendships f where
       (f.user_low = auth.uid() and f.user_high = events.creator_id) or
       (f.user_high = auth.uid() and f.user_low = events.creator_id)
-  )
+  ))
 );
 drop policy if exists "Users create own events" on public.events;
 create policy "Users create own events" on public.events for insert to authenticated with check (creator_id = auth.uid());
@@ -243,11 +255,11 @@ drop policy if exists "Friends can view allowed event photos" on storage.objects
 create policy "Friends can view allowed event photos" on storage.objects for select to authenticated using (
   bucket_id = 'event-photos' and exists (
     select 1 from public.events e where e.photo_path = name and (
-      e.creator_id = auth.uid() or exists (
+      e.creator_id = auth.uid() or (e.visibility = 'friends' and exists (
         select 1 from public.friendships f where
           (f.user_low = auth.uid() and f.user_high = e.creator_id) or
           (f.user_high = auth.uid() and f.user_low = e.creator_id)
-      )
+      ))
     )
   )
 );

@@ -16,7 +16,7 @@ Deno.serve(async (request) => {
 
   const now = Date.now();
   const { data: events, error: eventError } = await supabase.from('events')
-    .select('id,creator_id,name,starts_at,all_day')
+    .select('id,creator_id,name,starts_at,all_day,visibility')
     .eq('all_day', false)
     .gte('starts_at', new Date(now - 60_000).toISOString())
     .lte('starts_at', new Date(now + 15 * 60_000).toISOString());
@@ -33,12 +33,14 @@ Deno.serve(async (request) => {
         : null;
     if (!kind) continue;
 
-    const { data: links, error: friendshipError } = await supabase.from('friendships')
-      .select('user_low,user_high')
-      .or(`user_low.eq.${event.creator_id},user_high.eq.${event.creator_id}`);
-    if (friendshipError) continue;
     const recipientIds = new Set([event.creator_id]);
-    for (const link of links || []) recipientIds.add(link.user_low === event.creator_id ? link.user_high : link.user_low);
+    if (event.visibility === 'friends') {
+      const { data: links, error: friendshipError } = await supabase.from('friendships')
+        .select('user_low,user_high')
+        .or(`user_low.eq.${event.creator_id},user_high.eq.${event.creator_id}`);
+      if (friendshipError) continue;
+      for (const link of links || []) recipientIds.add(link.user_low === event.creator_id ? link.user_high : link.user_low);
+    }
     const recipients = [...recipientIds];
 
     const [{ data: preferences }, { data: creator }] = await Promise.all([

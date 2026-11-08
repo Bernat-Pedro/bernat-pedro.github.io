@@ -10,6 +10,8 @@ Gather is a static-site app at `events-manager.html`. Supabase supplies accounts
 4. In **Authentication → URL Configuration**, set the site URL and add the deployed `events-manager.html` URL (and your local URL) to the redirect allow list.
 5. Serve the repository over HTTPS in production. For local work, run `python3 -m http.server 8000` and open `http://localhost:8000/events-manager.html`.
 
+When updating an existing project, rerun `supabase/schema.sql` to apply idempotent schema and policy changes, including the event visibility setting. Redeploy changed Edge Functions after updating their source.
+
 The public profile directory contains only usernames, avatar paths, and account creation dates. Email addresses remain in Supabase Auth. Events, friendships, requests, notification preferences, notifications, and push subscriptions are stored separately and protected with RLS. Profile and event images are in private buckets and fetched through authenticated Storage requests, so RLS is checked on each fetch.
 
 ## Background notifications

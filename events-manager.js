@@ -6,7 +6,7 @@ const modal = document.querySelector('#modal');
 const toastNode = document.querySelector('#toast');
 const validConfig = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
 const db = validConfig ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } }) : null;
-const state = { user: null, profile: null, tab: 'calendar', month: new Date(new Date().getFullYear(), new Date().getMonth(), 1), events: [], friends: [], requests: [], prefs: {}, filter: 'all', friendTab: 'friends', query: '', cache: new Map(), reminderTimer: null, channel: null, unreadCount: 0, seenNotifIds: new Set(), resumeCheck: null };
+const state = { user: null, profile: null, tab: 'calendar', month: new Date(new Date().getFullYear(), new Date().getMonth(), 1), events: [], friends: [], requests: [], prefs: {}, filter: 'me', friendTab: 'friends', query: '', cache: new Map(), reminderTimer: null, channel: null, unreadCount: 0, seenNotifIds: new Set(), resumeCheck: null };
 const categories = ['Dinner', 'Birthday', 'Outdoor', 'Celebration', 'Games', 'Travel', 'Other'];
 
 function escapeHtml(value = '') {
@@ -28,16 +28,18 @@ function fail(error) {
 
 function renderLoadError(error) {
   const missingSchema = error?.code === 'PGRST205' || /schema cache|could not find the table/i.test(error?.message || '');
-  const heading = missingSchema ? 'Finish database setup' : 'Couldn’t open Gather';
-  const detail = missingSchema
-    ? 'Supabase is connected, but Gather’s tables are missing. Run supabase/schema.sql in your project’s SQL Editor, then reload this page.'
-    : 'Check your connection or Supabase setup, then try signing in again.';
-  app.innerHTML = `<section class="profile-setup"><div class="setup-card"><p class="eyebrow">${missingSchema ? 'One setup step left' : 'A small connection hiccup'}</p><h1>${heading}</h1><p class="form-hint">${detail}</p><button class="button primary" type="button" data-action="retry-load">Try again <span aria-hidden="true">↻</span></button></div></section>`;
-  app.querySelector('[data-action="retry-load"]').addEventListener('click', () => {
+  const missingVisibility = error?.code === '42703' && /events\.visibility|visibility/i.test(error?.message || '');
+  if (!missingSchema && !missingVisibility) {
     state.user = null;
     state.profile = null;
     authScreen();
-  });
+    return;
+  }
+  const detail = missingVisibility
+    ? 'Your sign-in may have succeeded, but Supabase is missing the events.visibility column. Run the updated supabase/schema.sql in your project’s SQL Editor, then reload.'
+    : 'Supabase is connected, but Gather’s tables are missing. Run supabase/schema.sql in your project’s SQL Editor, then reload this page.';
+  app.innerHTML = `<section class="profile-setup"><div class="setup-card"><p class="eyebrow">One setup step left</p><h1>Finish database setup</h1><p class="form-hint">${detail}</p><button class="button primary" type="button" data-action="retry-load">Reload Gather <span aria-hidden="true">↻</span></button></div></section>`;
+  app.querySelector('[data-action="retry-load"]').addEventListener('click', () => location.reload());
 }
 
 function initials(name = '?') {
@@ -186,7 +188,7 @@ async function loadApplication() {
     db.from('notification_preferences').select('*').eq('user_id', state.user.id).maybeSingle(),
     db.from('friendships').select('user_low,user_high'),
     db.from('friend_requests').select('id,requester_id,recipient_id,status,created_at').or(`requester_id.eq.${state.user.id},recipient_id.eq.${state.user.id}`).eq('status', 'pending').order('created_at', { ascending: false }),
-    db.from('events').select('id,creator_id,name,category,event_date,starts_at,ends_at,all_day,description,location,photo_path,created_at').order('event_date'),
+    db.from('events').select('id,creator_id,name,category,event_date,starts_at,ends_at,all_day,visibility,description,location,photo_path,created_at').order('event_date'),
     db.from('notifications').select('id', { count: 'exact', head: true }).is('read_at', null)
   ]);
   for (const result of [profileResult, preferencesResult, friendshipResult, requestResult, eventResult, unreadResult]) if (result.error) throw result.error;
@@ -223,7 +225,9 @@ function friendIds() {
 
 function visibleEvents() {
   const friends = new Set(friendIds());
-  return state.events.filter((event) => state.filter === 'all' ? true : event.creator_id !== state.user.id && friends.has(event.creator_id));
+  return state.events.filter((event) => state.filter === 'me'
+    ? event.creator_id === state.user.id
+    : event.visibility === 'friends' && (event.creator_id === state.user.id || friends.has(event.creator_id)));
 }
 
 function monthDays(month) {
@@ -259,11 +263,11 @@ function renderCalendar() {
   }).join('');
   const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
   const hasEvents = monthEvents.some((event) => event.event_date.startsWith(monthPrefix));
-  return `<section class="calendar-panel"><div class="calendar-top"><div><p class="eyebrow">The good stuff</p><h2>Calendar</h2></div><div class="month-controls"><button class="icon-button" type="button" data-action="month-prev" aria-label="Previous month">‹</button><button class="today-button" type="button" data-action="today">Today</button><button class="icon-button" type="button" data-action="month-next" aria-label="Next month">›</button></div></div><div class="month-label"><h3>${new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(state.month)}</h3><div class="segmented" role="group" aria-label="Event visibility"><button type="button" data-filter="friends" class="${state.filter === 'friends' ? 'selected' : ''}">Friends</button><button type="button" data-filter="all" class="${state.filter === 'all' ? 'selected' : ''}">All</button></div></div><div class="calendar-grid"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>${cells}</div>${hasEvents ? '' : '<p class="calendar-empty">No plans this month yet. Start with one in the planner.</p>'}</section>`;
+  return `<section class="calendar-panel"><div class="calendar-top"><div><p class="eyebrow">The good stuff</p><h2>Calendar</h2></div><div class="month-controls"><button class="icon-button" type="button" data-action="month-prev" aria-label="Previous month">‹</button><button class="today-button" type="button" data-action="today">Today</button><button class="icon-button" type="button" data-action="month-next" aria-label="Next month">›</button></div></div><div class="month-label"><h3>${new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(state.month)}</h3><div class="segmented" role="group" aria-label="Event calendar"><button type="button" data-filter="me" class="${state.filter === 'me' ? 'selected' : ''}">Me</button><button type="button" data-filter="friends" class="${state.filter === 'friends' ? 'selected' : ''}">Friends</button></div></div><div class="calendar-grid"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>${cells}</div>${hasEvents ? '' : '<p class="calendar-empty">No plans this month yet. Start with one in the planner.</p>'}</section>`;
 }
 
 function renderPlanner() {
-  return `<section class="planner-panel"><div class="panel-heading"><p class="eyebrow">Make it happen</p><h2>Plan something</h2></div><form id="event-form" class="stack-form"><label>Event name<input name="name" required maxlength="100" placeholder="Sunday supper"></label><label>Category<select name="category" required>${categories.map((category) => `<option>${category}</option>`).join('')}</select></label><label>Date<input name="event_date" type="date" required value="${dateKey(state.month.getFullYear(), state.month.getMonth(), Math.min(new Date().getDate(), new Date(state.month.getFullYear(), state.month.getMonth() + 1, 0).getDate()))}"></label><label class="switch-row"><span><strong>All day</strong><small>Skip the clock for this one</small></span><input type="checkbox" name="all_day" checked><span class="switch-ui"></span></label><div class="time-fields" hidden><label>From<input name="start_time" type="time"></label><label>To<input name="end_time" type="time"></label></div><label>Description <span class="optional">Optional</span><textarea name="description" rows="3" maxlength="1000" placeholder="A few details for your guests"></textarea></label><label>Location <span class="optional">Optional</span><input name="location" maxlength="200" placeholder="Where to meet"></label><label class="photo-field">Event photo <span class="optional">Optional</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span class="photo-preview" id="event-photo-preview" hidden></span><small>Image up to 5 MB</small></label><button class="button primary wide" type="submit">Create event <span aria-hidden="true">↗</span></button></form></section>`;
+  return `<section class="planner-panel"><div class="panel-heading"><p class="eyebrow">Make it happen</p><h2>Plan something</h2></div><form id="event-form" class="stack-form"><label>Event name<input name="name" required maxlength="100" placeholder="Sunday supper"></label><label>Category<select name="category" required>${categories.map((category) => `<option>${category}</option>`).join('')}</select></label><label>Date<input name="event_date" type="date" required value="${dateKey(state.month.getFullYear(), state.month.getMonth(), Math.min(new Date().getDate(), new Date(state.month.getFullYear(), state.month.getMonth() + 1, 0).getDate()))}"></label><label class="switch-row"><span><strong>All day</strong><small>Skip the clock for this one</small></span><input type="checkbox" name="all_day" checked><span class="switch-ui"></span></label><div class="time-fields" hidden><label>From<input name="start_time" type="time"></label><label>To<input name="end_time" type="time"></label></div><fieldset class="visibility-picker"><legend>Who can see it?</legend><div class="visibility-options"><label><input type="radio" name="visibility" value="private"><span>Only me</span></label><label><input type="radio" name="visibility" value="friends" checked><span>Friends</span></label></div></fieldset><label>Description <span class="optional">Optional</span><textarea name="description" rows="3" maxlength="1000" placeholder="A few details for your guests"></textarea></label><label>Location <span class="optional">Optional</span><input name="location" maxlength="200" placeholder="Where to meet"></label><label class="photo-field">Event photo <span class="optional">Optional</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span class="photo-preview" id="event-photo-preview" hidden></span><small>Image up to 5 MB</small></label><button class="button primary wide" type="submit">Create event <span aria-hidden="true">↗</span></button></form></section>`;
 }
 
 function renderApp() {
@@ -307,7 +311,17 @@ function wireSharedEvents() {
     state.tab = button.dataset.tab;
     renderApp();
   }));
-  app.querySelector('[data-action="profile"]')?.addEventListener('click', () => showProfile(state.profile));
+  const topbarAvatar = app.querySelector('.topbar-actions > .avatar');
+  if (topbarAvatar) {
+    const profileButton = document.createElement('button');
+    profileButton.type = 'button';
+    profileButton.className = 'avatar-action';
+    profileButton.dataset.action = 'profile';
+    profileButton.setAttribute('aria-label', 'View your profile');
+    topbarAvatar.replaceWith(profileButton);
+    profileButton.append(topbarAvatar);
+  }
+  app.querySelectorAll('[data-action="profile"]').forEach((button) => button.addEventListener('click', () => showProfile(state.profile)));
   app.querySelector('[data-action="notifications"]')?.addEventListener('click', showNotifications);
   app.querySelector('[data-action="delete-account"]')?.addEventListener('click', confirmDeleteAccount);
 }
@@ -362,7 +376,7 @@ async function createEvent(event) {
     }
     const startsAt = allDay ? new Date(`${date}T00:00`).toISOString() : new Date(`${date}T${startTime}`).toISOString();
     const endsAt = allDay ? null : new Date(`${date}T${endTime}`).toISOString();
-    const record = { creator_id: state.user.id, name: String(values.get('name')).trim(), category: values.get('category'), event_date: date, starts_at: startsAt, ends_at: endsAt, all_day: allDay, description: String(values.get('description') || '').trim() || null, location: String(values.get('location') || '').trim() || null, photo_path: photoPath };
+    const record = { creator_id: state.user.id, name: String(values.get('name')).trim(), category: values.get('category'), event_date: date, starts_at: startsAt, ends_at: endsAt, all_day: allDay, visibility: values.get('visibility') || 'friends', description: String(values.get('description') || '').trim() || null, location: String(values.get('location') || '').trim() || null, photo_path: photoPath };
     const { error } = await db.from('events').insert(record);
     if (error) throw error;
     await refreshData();
@@ -373,7 +387,7 @@ async function createEvent(event) {
 
 async function refreshData() {
   const [events, friends, requests, preferences, unread] = await Promise.all([
-    db.from('events').select('id,creator_id,name,category,event_date,starts_at,ends_at,all_day,description,location,photo_path,created_at').order('event_date'),
+    db.from('events').select('id,creator_id,name,category,event_date,starts_at,ends_at,all_day,visibility,description,location,photo_path,created_at').order('event_date'),
     db.from('friendships').select('user_low,user_high'),
     db.from('friend_requests').select('id,requester_id,recipient_id,status,created_at').or(`requester_id.eq.${state.user.id},recipient_id.eq.${state.user.id}`).eq('status', 'pending'),
     db.from('notification_preferences').select('*').eq('user_id', state.user.id).maybeSingle(),
@@ -391,7 +405,7 @@ async function refreshData() {
 
 async function wireFriends() {
   app.querySelectorAll('[data-friend-tab]').forEach((button) => button.addEventListener('click', () => { state.friendTab = button.dataset.friendTab; renderApp(); }));
-  app.querySelector('[data-action="search"]')?.addEventListener('click', showSearch);
+  app.querySelector('[data-action="search"]')?.addEventListener('click', () => showSearch());
   const ids = [...new Set([...friendIds(), ...state.requests.map((request) => request.requester_id === state.user.id ? request.recipient_id : request.requester_id)])];
   await loadPeople(ids);
   app.querySelectorAll('[data-remove-friend]').forEach((button) => button.addEventListener('click', async () => {
@@ -531,6 +545,10 @@ function editEvent(event) {
   modal.innerHTML = `<div class="modal-heading"><div><p class="eyebrow">Your plans</p><h2>Edit event</h2></div><button class="icon-button" type="button" data-close aria-label="Close">×</button></div><form id="edit-event-form" class="stack-form"><label>Event name<input name="name" value="${escapeHtml(event.name)}" required maxlength="100"></label><label>Category<select name="category">${categories.map((category) => `<option ${category === event.category ? 'selected' : ''}>${category}</option>`).join('')}</select></label><label>Date<input name="event_date" type="date" value="${event.event_date}" required></label><label class="switch-row"><span><strong>All day</strong></span><input type="checkbox" name="all_day" ${event.all_day ? 'checked' : ''}><span class="switch-ui"></span></label><div class="time-fields" ${event.all_day ? 'hidden' : ''}><label>From<input name="start_time" type="time" value="${event.starts_at ? new Date(event.starts_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ''}" ${event.all_day ? '' : 'required'}></label><label>To<input name="end_time" type="time" value="${event.ends_at ? new Date(event.ends_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : ''}" ${event.all_day ? '' : 'required'}></label></div><label>Description<textarea name="description" rows="3" maxlength="1000">${escapeHtml(event.description || '')}</textarea></label><label>Location<input name="location" maxlength="200" value="${escapeHtml(event.location || '')}"></label><button class="button primary wide" type="submit">Save changes</button></form>`;
   modal.showModal();
   modal.querySelector('[data-close]').addEventListener('click', () => modal.close());
+  const visibilityFieldset = document.createElement('fieldset');
+  visibilityFieldset.className = 'visibility-picker';
+  visibilityFieldset.innerHTML = `<legend>Who can see it?</legend><div class="visibility-options"><label><input type="radio" name="visibility" value="private" ${event.visibility === 'private' ? 'checked' : ''}><span>Only me</span></label><label><input type="radio" name="visibility" value="friends" ${event.visibility !== 'private' ? 'checked' : ''}><span>Friends</span></label></div>`;
+  modal.querySelector('#edit-event-form textarea[name="description"]').closest('label').before(visibilityFieldset);
   const allDay = modal.querySelector('[name="all_day"]');
   allDay.addEventListener('change', () => { modal.querySelector('.time-fields').hidden = allDay.checked; modal.querySelectorAll('.time-fields input').forEach((input) => { input.required = !allDay.checked; }); });
   modal.querySelector('#edit-event-form').addEventListener('submit', async (action) => {
@@ -541,7 +559,8 @@ function editEvent(event) {
     const startTime = String(values.get('start_time') || '');
     const endTime = String(values.get('end_time') || '');
     if (!allDayValue && (!startTime || !endTime || endTime <= startTime)) return toast('The end time must be later than the start time.', true);
-    const { error } = await db.from('events').update({ name: String(values.get('name')).trim(), category: values.get('category'), event_date: date, starts_at: allDayValue ? new Date(`${date}T00:00`).toISOString() : new Date(`${date}T${startTime}`).toISOString(), ends_at: allDayValue ? null : new Date(`${date}T${endTime}`).toISOString(), all_day: allDayValue, description: String(values.get('description') || '').trim() || null, location: String(values.get('location') || '').trim() || null }).eq('id', event.id);
+    const updatedEvent = { name: String(values.get('name')).trim(), category: values.get('category'), event_date: date, starts_at: allDayValue ? new Date(`${date}T00:00`).toISOString() : new Date(`${date}T${startTime}`).toISOString(), ends_at: allDayValue ? null : new Date(`${date}T${endTime}`).toISOString(), all_day: allDayValue, visibility: values.get('visibility') || 'friends', description: String(values.get('description') || '').trim() || null, location: String(values.get('location') || '').trim() || null };
+    const { error } = await db.from('events').update(updatedEvent).eq('id', event.id);
     if (error) return fail(error);
     modal.close(); await refreshData(); toast('Event updated.');
   });

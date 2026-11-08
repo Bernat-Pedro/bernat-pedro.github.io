@@ -133,6 +133,8 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .topbar { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(20px, 4vw, 54px); border-bottom: 1px solid var(--line); background: var(--surface); }
 .topbar-date { color: var(--muted); font-size: .85rem; }
 .topbar-actions { display: flex; align-items: center; gap: 15px; }
+.avatar-action { display: inline-grid; place-items: center; padding: 2px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.avatar-action:hover { outline: 2px solid var(--green); outline-offset: 2px; }
 .notification-dot { position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--coral); }
 .content { max-width: 1640px; margin: 0 auto; padding: 34px clamp(20px, 3.2vw, 48px) 55px; }
 .calendar-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(270px, 330px); align-items: start; gap: 25px; }
@@ -165,6 +167,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .stack-form > label.switch-row > span:first-child small { display: none; }
 .stack-form > label.switch-row .switch-ui { margin-left: auto; }
 .stack-form > label.switch-row input { right: 11px; }
+.stack-form .visibility-picker { grid-column: 1 / -1; }
 .stack-form label, .stack-form .time-fields label { font-size: .8rem; }
 .stack-form input:not([type="checkbox"]), .stack-form select, .stack-form textarea { min-height: 40px; padding: 9px 10px; font-size: .83rem; font-weight: 400; }
 .stack-form textarea { min-height: 74px; }
@@ -181,6 +184,14 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .switch-row input:focus-visible + .switch-ui, .toggle-setting input:focus-visible + .switch-ui { outline: 3px solid color-mix(in srgb, var(--coral) 70%, transparent); outline-offset: 3px; }
 .time-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .time-fields label { display: grid; gap: 7px; margin: 0; }
+.visibility-picker { min-width: 0; margin: 0; padding: 0; border: 0; }
+.visibility-picker legend { margin-bottom: 7px; font-size: .8rem; font-weight: 700; }
+.visibility-options { width: max-content; max-width: 100%; display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
+.visibility-options label { position: relative; display: block; margin: 0; cursor: pointer; }
+.visibility-options input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.visibility-options label span { min-height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 4px; color: var(--muted); font-size: .78rem; font-weight: 600; }
+.visibility-options input:checked + span { color: var(--green); background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.visibility-options input:focus-visible + span { outline: 2px solid var(--coral); outline-offset: 2px; }
 .photo-field input[type="file"] { max-width: 100%; color: var(--muted); font-size: .75rem; font-weight: 400; }
 .photo-field small { color: var(--muted); font-size: .72rem; font-weight: 400; }
 .photo-preview img { width: 100%; max-height: 150px; display: block; border-radius: 5px; object-fit: cover; }
@@ -189,7 +200,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .friends-view, .settings-view { max-width: 950px; margin: 0 auto; }
 .page-heading { margin: 3px 0 24px; }
 .page-heading h1 { font-size: 2rem; }
-.search-button { width: 42px; height: 42px; font-size: 1.6rem; }
+.search-button { width: 44px; min-width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: 0; font-size: 1.65rem; touch-action: manipulation; }
 .tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--line); }
 .tabs button { position: relative; min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 3px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: .86rem; font-weight: 600; }
 .tabs button.active { color: var(--green); }
@@ -333,6 +344,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   .stack-form { grid-template-columns: 1fr 1fr; gap: 14px 11px; }
   .stack-form > label:first-child, .stack-form > label:nth-child(2), .stack-form > label:nth-last-child(-n+2), .stack-form .time-fields, .stack-form .button { grid-column: 1 / -1; }
   .page-heading h1 { font-size: 1.7rem; }
+  .search-button { width: 48px; min-width: 48px; height: 48px; font-size: 1.85rem; }
   .settings-grid { grid-template-columns: 1fr; grid-template-areas: "appearance" "reminders" "account"; }
   .settings-section { padding: 17px; }
   .username-form { align-items: stretch; flex-direction: column; gap: 0; }
