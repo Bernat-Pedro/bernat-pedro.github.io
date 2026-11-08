@@ -143,11 +143,12 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .planner-panel { padding: 22px; }
 .calendar-top, .month-label, .page-heading, .panel-heading, .modal-heading { display: flex; align-items: center; justify-content: space-between; }
 .calendar-top h2, .page-heading h1 { margin: 0; font-family: Manrope, sans-serif; font-size: 1.65rem; }
+.calendar-top h2 { font-size: 1.95rem; }
 .month-controls { display: flex; align-items: center; gap: 7px; }
 .today-button { min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 6px; background: transparent; cursor: pointer; font-size: .8rem; font-weight: 600; }
 .month-title-button { min-width: 142px; min-height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: var(--surface); cursor: pointer; font-size: .88rem; font-weight: 700; }
 .month-title-button:hover { border-color: var(--green); color: var(--green); }
-.month-label { margin: 27px 0 14px; gap: 15px; }
+.month-label { justify-content: flex-end; margin: 27px 0 14px; gap: 15px; }
 .month-label h3 { margin: 0; font-family: Manrope, sans-serif; font-size: 1.2rem; }
 .segmented { display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
 .segmented button { min-height: 30px; padding: 4px 11px; border: 0; border-radius: 4px; color: var(--muted); background: transparent; cursor: pointer; font-size: .77rem; font-weight: 600; }
@@ -331,7 +332,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   .topbar-date { font-size: .78rem; }
   .content { padding: 22px 13px 28px; }
   .calendar-panel { padding: 13px 9px; }
-  .calendar-top h2 { font-size: 1.4rem; }
+  .calendar-top h2 { font-size: 1.65rem; }
   .month-label { margin: 20px 2px 12px; }
   .month-label h3 { font-size: 1rem; }
   .month-controls { gap: 4px; }
