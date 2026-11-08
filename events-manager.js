@@ -51,7 +51,10 @@ async function assetUrl(bucket, path) {
   const key = `${bucket}:${path}`;
   if (state.cache.has(key)) return state.cache.get(key);
   const { data, error } = await db.storage.from(bucket).download(path);
-  if (error) return '';
+  if (error) {
+    console.error(`Could not download ${bucket} image:`, error);
+    return '';
+  }
   const url = URL.createObjectURL(data);
   state.cache.set(key, url);
   return url;
@@ -263,7 +266,8 @@ function renderCalendar() {
   }).join('');
   const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
   const hasEvents = monthEvents.some((event) => event.event_date.startsWith(monthPrefix));
-  return `<section class="calendar-panel"><div class="calendar-top"><div><p class="eyebrow">The good stuff</p><h2>Calendar</h2></div><div class="month-controls"><button class="icon-button" type="button" data-action="month-prev" aria-label="Previous month">‹</button><button class="today-button" type="button" data-action="today">Today</button><button class="icon-button" type="button" data-action="month-next" aria-label="Next month">›</button></div></div><div class="month-label"><h3>${new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(state.month)}</h3><div class="segmented" role="group" aria-label="Event calendar"><button type="button" data-filter="me" class="${state.filter === 'me' ? 'selected' : ''}">Me</button><button type="button" data-filter="friends" class="${state.filter === 'friends' ? 'selected' : ''}">Friends</button></div></div><div class="calendar-grid"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>${cells}</div>${hasEvents ? '' : '<p class="calendar-empty">No plans this month yet. Start with one in the planner.</p>'}</section>`;
+  const monthTitle = new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(state.month);
+  return `<section class="calendar-panel"><div class="calendar-top"><div><p class="eyebrow">The good stuff</p><h2>Calendar</h2></div><div class="month-controls"><button class="icon-button" type="button" data-action="month-prev" aria-label="Previous month">‹</button><button class="month-title-button" type="button" data-action="today" aria-label="Return to current month">${monthTitle}</button><button class="icon-button" type="button" data-action="month-next" aria-label="Next month">›</button></div></div><div class="month-label"><div class="segmented" role="group" aria-label="Event calendar"><button type="button" data-filter="me" class="${state.filter === 'me' ? 'selected' : ''}">Me</button><button type="button" data-filter="friends" class="${state.filter === 'friends' ? 'selected' : ''}">Friends</button></div></div><div class="calendar-grid"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>${cells}</div>${hasEvents ? '' : '<p class="calendar-empty">No plans this month yet. Start with one in the planner.</p>'}</section>`;
 }
 
 function renderPlanner() {
@@ -522,11 +526,29 @@ async function showEvent(id) {
     const creator = event.creator_id === state.user.id ? state.profile : await getPerson(event.creator_id);
     const own = event.creator_id === state.user.id;
     const imageUrl = event.photo_path ? await assetUrl('event-photos', event.photo_path) : '';
-    const photo = imageUrl ? `<img class="event-photo" src="${imageUrl}" alt="Photo for ${escapeHtml(event.name)}">` : '';
-    modal.innerHTML = `<div class="modal-heading"><span></span><button class="icon-button" type="button" data-close aria-label="Close">×</button></div>${photo}<div class="event-detail"><span class="category-label">${escapeHtml(event.category)}</span><h2>${escapeHtml(event.name)}</h2><p class="event-detail-time">${new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format(new Date(`${event.event_date}T12:00:00`))} · ${eventTime(event)}</p>${event.location ? `<p class="detail-line"><strong>Where</strong>${escapeHtml(event.location)}</p>` : ''}${event.description ? `<p class="detail-description">${escapeHtml(event.description)}</p>` : ''}<div class="event-host">${avatar(creator)}<span><small>Put together by</small><strong>@${escapeHtml(creator.username)}</strong></span>${!own && !friendIds().includes(creator.id) ? `<button class="button secondary small-button" type="button" data-send-request="${creator.id}">Add friend</button>` : ''}</div>${own ? '<div class="event-actions"><button class="button secondary" type="button" data-edit-event>Edit event</button><button class="button danger" type="button" data-delete-event>Delete event</button></div>' : ''}</div>`;
+    const photo = imageUrl
+      ? `<img class="event-photo" src="${imageUrl}" alt="Photo for ${escapeHtml(event.name)}">`
+      : event.photo_path ? '<p class="photo-unavailable">Event photo could not be loaded.</p>' : '';
+    const { data: rsvps, error: rsvpError } = await db.from('event_rsvps').select('user_id').eq('event_id', event.id);
+    if (rsvpError) throw rsvpError;
+    const isGoing = rsvps.some((rsvp) => rsvp.user_id === state.user.id);
+    const rsvpAction = own ? '' : `<div class="rsvp-row"><button class="button ${isGoing ? 'secondary' : 'primary'}" type="button" data-rsvp-event aria-pressed="${isGoing}">${isGoing ? 'You’re in · Leave' : "I'm In!"}</button><span>${rsvps.length} going</span></div>`;
+    modal.innerHTML = `<div class="modal-heading"><span></span><button class="icon-button" type="button" data-close aria-label="Close">×</button></div>${photo}<div class="event-detail"><span class="category-label">${escapeHtml(event.category)}</span><h2>${escapeHtml(event.name)}</h2><p class="event-detail-time">${new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format(new Date(`${event.event_date}T12:00:00`))} · ${eventTime(event)}</p>${event.location ? `<p class="detail-line"><strong>Where</strong>${escapeHtml(event.location)}</p>` : ''}${event.description ? `<p class="detail-description">${escapeHtml(event.description)}</p>` : ''}<div class="event-host">${avatar(creator)}<span><small>Put together by</small><strong>@${escapeHtml(creator.username)}</strong></span>${!own && !friendIds().includes(creator.id) ? `<button class="button secondary small-button" type="button" data-send-request="${creator.id}">Add friend</button>` : ''}</div>${rsvpAction}${own ? '<div class="event-actions"><button class="button secondary" type="button" data-edit-event>Edit event</button><button class="button danger" type="button" data-delete-event>Delete event</button></div>' : ''}</div>`;
     modal.showModal();
     modal.querySelector('[data-close]').addEventListener('click', () => modal.close());
     await hydrateImages(modal);
+    modal.querySelector('[data-rsvp-event]')?.addEventListener('click', async (action) => {
+      action.currentTarget.disabled = true;
+      try {
+        const result = isGoing
+          ? await db.from('event_rsvps').delete().eq('event_id', event.id).eq('user_id', state.user.id)
+          : await db.from('event_rsvps').insert({ event_id: event.id, user_id: state.user.id });
+        if (result.error) throw result.error;
+        modal.close();
+        await showEvent(event.id);
+        toast(isGoing ? 'RSVP removed.' : 'You’re in!');
+      } catch (error) { action.currentTarget.disabled = false; fail(error); }
+    });
     modal.querySelector('[data-send-request]')?.addEventListener('click', async (action) => {
       action.currentTarget.disabled = true;
       try { await sendFriendRequest(creator.id); toast('Friend request sent.'); modal.close(); await refreshData(); } catch (error) { action.currentTarget.disabled = false; fail(error); }

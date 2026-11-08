@@ -145,6 +145,8 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .calendar-top h2, .page-heading h1 { margin: 0; font-family: Manrope, sans-serif; font-size: 1.65rem; }
 .month-controls { display: flex; align-items: center; gap: 7px; }
 .today-button { min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 6px; background: transparent; cursor: pointer; font-size: .8rem; font-weight: 600; }
+.month-title-button { min-width: 142px; min-height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: var(--surface); cursor: pointer; font-size: .88rem; font-weight: 700; }
+.month-title-button:hover { border-color: var(--green); color: var(--green); }
 .month-label { margin: 27px 0 14px; gap: 15px; }
 .month-label h3 { margin: 0; font-family: Manrope, sans-serif; font-size: 1.2rem; }
 .segmented { display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); }
@@ -268,6 +270,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .profile-modal > p:not(.eyebrow) { margin: 7px 0 22px; color: var(--muted); font-size: .82rem; }
 .friend-badge { padding: 9px 13px; border-radius: 5px; color: var(--green); background: var(--green-soft); font-size: .8rem; font-weight: 700; }
 .event-photo { width: calc(100% + 48px); max-height: 260px; display: block; margin: -24px -24px 18px; object-fit: cover; }
+.photo-unavailable { margin: -24px -24px 18px; padding: 18px 24px; color: var(--muted); background: var(--surface-soft); font-size: .82rem; }
 .event-detail .category-label { color: var(--green); font-size: .74rem; font-weight: 700; }
 .event-detail h2 { margin-top: 7px; font-size: 1.8rem; }
 .event-detail-time { margin: 9px 0 20px; color: var(--muted); font-size: .83rem; }
@@ -278,6 +281,8 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .event-host > span:nth-child(2) { flex: 1; display: grid; gap: 3px; }
 .event-host small { color: var(--muted); font-size: .7rem; }
 .event-host strong { font-size: .83rem; }
+.rsvp-row { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid var(--line); }
+.rsvp-row > span { color: var(--muted); font-size: .78rem; }
 .event-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
 .event-actions .danger { margin-left: auto; }
 .notification-list { display: grid; }
@@ -332,6 +337,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   .month-controls { gap: 4px; }
   .month-controls .icon-button { width: 33px; height: 34px; }
   .today-button { min-height: 34px; padding-inline: 8px; font-size: .72rem; }
+  .month-title-button { min-width: 125px; min-height: 34px; padding-inline: 7px; font-size: .76rem; }
   .segmented button { padding-inline: 8px; font-size: .7rem; }
   .weekday { min-height: 30px; font-size: .63rem; }
   .day-cell { min-height: clamp(62px, 16vw, 86px); padding: 3px 2px; }

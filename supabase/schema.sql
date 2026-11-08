@@ -61,6 +61,14 @@ $$;
 create index if not exists events_creator_date_idx on public.events (creator_id, event_date);
 create index if not exists events_starts_at_idx on public.events (starts_at);
 
+create table if not exists public.event_rsvps (
+  event_id uuid not null references public.events(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (event_id, user_id)
+);
+create index if not exists event_rsvps_user_idx on public.event_rsvps (user_id, created_at desc);
+
 create table if not exists public.notification_preferences (
   user_id uuid primary key references public.profiles(id) on delete cascade,
   theme text not null default 'light' check (theme in ('light', 'dark')),
@@ -182,6 +190,7 @@ alter table public.profiles enable row level security;
 alter table public.friend_requests enable row level security;
 alter table public.friendships enable row level security;
 alter table public.events enable row level security;
+alter table public.event_rsvps enable row level security;
 alter table public.notification_preferences enable row level security;
 alter table public.notifications enable row level security;
 alter table public.push_subscriptions enable row level security;
@@ -213,6 +222,17 @@ drop policy if exists "Creators update own events" on public.events;
 create policy "Creators update own events" on public.events for update to authenticated using (creator_id = auth.uid()) with check (creator_id = auth.uid());
 drop policy if exists "Creators delete own events" on public.events;
 create policy "Creators delete own events" on public.events for delete to authenticated using (creator_id = auth.uid());
+
+drop policy if exists "View RSVPs for visible events" on public.event_rsvps;
+create policy "View RSVPs for visible events" on public.event_rsvps for select to authenticated using (
+  exists (select 1 from public.events e where e.id = event_rsvps.event_id)
+);
+drop policy if exists "Users RSVP to visible events" on public.event_rsvps;
+create policy "Users RSVP to visible events" on public.event_rsvps for insert to authenticated with check (
+  user_id = auth.uid() and exists (select 1 from public.events e where e.id = event_rsvps.event_id)
+);
+drop policy if exists "Users remove own RSVPs" on public.event_rsvps;
+create policy "Users remove own RSVPs" on public.event_rsvps for delete to authenticated using (user_id = auth.uid());
 
 drop policy if exists "Users manage own notification preferences" on public.notification_preferences;
 create policy "Users manage own notification preferences" on public.notification_preferences for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
@@ -254,7 +274,7 @@ create policy "Users delete own profile pictures" on storage.objects for delete 
 drop policy if exists "Friends can view allowed event photos" on storage.objects;
 create policy "Friends can view allowed event photos" on storage.objects for select to authenticated using (
   bucket_id = 'event-photos' and exists (
-    select 1 from public.events e where e.photo_path = name and (
+    select 1 from public.events e where e.photo_path = storage.objects.name and (
       e.creator_id = auth.uid() or (e.visibility = 'friends' and exists (
         select 1 from public.friendships f where
           (f.user_low = auth.uid() and f.user_high = e.creator_id) or
@@ -284,6 +304,7 @@ $$;
 grant select, insert, update on public.profiles to authenticated;
 grant select on public.friend_requests, public.friendships to authenticated;
 grant select, insert, update, delete on public.events to authenticated;
+grant select, insert, delete on public.event_rsvps to authenticated;
 grant select, insert, update on public.notification_preferences to authenticated;
 grant select, insert, update on public.notifications to authenticated;
 grant select, insert, update, delete on public.push_subscriptions to authenticated;
