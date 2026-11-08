@@ -6,7 +6,7 @@ const modal = document.querySelector('#modal');
 const toastNode = document.querySelector('#toast');
 const validConfig = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_PROJECT') && !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE');
 const db = validConfig ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } }) : null;
-const state = { user: null, profile: null, tab: 'calendar', month: new Date(new Date().getFullYear(), new Date().getMonth(), 1), events: [], friends: [], requests: [], prefs: {}, filter: 'me', friendTab: 'friends', query: '', cache: new Map(), reminderTimer: null, channel: null, unreadCount: 0, seenNotifIds: new Set(), resumeCheck: null };
+const state = { user: null, profile: null, tab: 'calendar', month: new Date(new Date().getFullYear(), new Date().getMonth(), 1), events: [], friends: [], requests: [], prefs: {}, filter: 'me', friendTab: 'friends', query: '', cache: new Map(), reminderTimer: null, eventExpiryTimer: null, channel: null, unreadCount: 0, seenNotifIds: new Set(), resumeCheck: null };
 const categories = ['Dinner', 'Birthday', 'Outdoor', 'Celebration', 'Games', 'Travel', 'Other'];
 
 function escapeHtml(value = '') {
@@ -228,9 +228,22 @@ function friendIds() {
 
 function visibleEvents() {
   const friends = new Set(friendIds());
-  return state.events.filter((event) => state.filter === 'me'
+  return state.events.filter((event) => !eventHasEnded(event) && (state.filter === 'me'
     ? event.creator_id === state.user.id
-    : event.visibility === 'friends' && (event.creator_id === state.user.id || friends.has(event.creator_id)));
+    : event.visibility === 'friends' && (event.creator_id === state.user.id || friends.has(event.creator_id))));
+}
+
+function eventEndTimestamp(event) {
+  if (event.all_day) {
+    const endOfDay = new Date(`${event.event_date}T00:00:00`);
+    endOfDay.setDate(endOfDay.getDate() + 1);
+    return endOfDay.getTime();
+  }
+  return Date.parse(event.ends_at || event.starts_at);
+}
+
+function eventHasEnded(event, now = Date.now()) {
+  return eventEndTimestamp(event) <= now;
 }
 
 function monthDays(month) {
@@ -270,6 +283,40 @@ function renderCalendar() {
   return `<section class="calendar-panel"><div class="calendar-top"><div><p class="eyebrow">The good stuff</p><h2>Calendar</h2></div><div class="month-controls"><button class="icon-button" type="button" data-action="month-prev" aria-label="Previous month">‹</button><button class="month-title-button" type="button" data-action="today" aria-label="Return to current month">${monthTitle}</button><button class="icon-button" type="button" data-action="month-next" aria-label="Next month">›</button></div></div><div class="month-label"><div class="segmented" role="group" aria-label="Event calendar"><button type="button" data-filter="me" class="${state.filter === 'me' ? 'selected' : ''}">Me</button><button type="button" data-filter="friends" class="${state.filter === 'friends' ? 'selected' : ''}">Friends</button></div></div><div class="calendar-grid"><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div><div class="weekday">Sat</div><div class="weekday">Sun</div>${cells}</div>${hasEvents ? '' : '<p class="calendar-empty">No plans this month yet. Start with one in the planner.</p>'}</section>`;
 }
 
+function updateCalendarDay(date) {
+  const cell = app.querySelector(`.day-cell[data-date="${date}"]`);
+  if (!cell) return;
+  const events = visibleEvents().filter((event) => event.event_date === date);
+  const eventList = cell.querySelector('.day-events');
+  eventList.innerHTML = `${events.slice(0, 3).map((event) => `<button class="calendar-event" type="button" data-event="${event.id}" title="${escapeHtml(event.name)}">${escapeHtml(event.name)}</button>`).join('')}${events.length > 3 ? `<span class="more-events">+${events.length - 3} more</span>` : ''}`;
+  eventList.querySelectorAll('[data-event]').forEach((button) => button.addEventListener('click', () => showEvent(button.dataset.event)));
+  const monthPrefix = `${state.month.getFullYear()}-${String(state.month.getMonth() + 1).padStart(2, '0')}`;
+  const hasEvents = visibleEvents().some((event) => event.event_date.startsWith(monthPrefix));
+  const emptyState = app.querySelector('.calendar-empty');
+  if (!hasEvents && !emptyState) {
+    const message = document.createElement('p');
+    message.className = 'calendar-empty';
+    message.textContent = 'No plans this month yet. Start with one in the planner.';
+    app.querySelector('.calendar-grid').after(message);
+  } else if (hasEvents && emptyState) {
+    emptyState.remove();
+  }
+}
+
+function scheduleEventExpiry() {
+  clearTimeout(state.eventExpiryTimer);
+  if (state.tab !== 'calendar') return;
+  const now = Date.now();
+  const endTimes = state.events.map(eventEndTimestamp).filter((endTime) => Number.isFinite(endTime) && endTime > now);
+  if (!endTimes.length) return;
+  const nextEnd = Math.min(...endTimes);
+  state.eventExpiryTimer = setTimeout(() => {
+    const endedDates = new Set(state.events.filter((event) => eventHasEnded(event)).map((event) => event.event_date));
+    endedDates.forEach(updateCalendarDay);
+    scheduleEventExpiry();
+  }, Math.min(nextEnd - now + 50, 2147480000));
+}
+
 function renderPlanner() {
   return `<section class="planner-panel"><div class="panel-heading"><p class="eyebrow">Make it happen</p><h2>Plan something</h2></div><form id="event-form" class="stack-form"><label>Event name<input name="name" required maxlength="100" placeholder="Sunday supper"></label><label>Category<select name="category" required>${categories.map((category) => `<option>${category}</option>`).join('')}</select></label><label>Date<input name="event_date" type="date" required value="${dateKey(state.month.getFullYear(), state.month.getMonth(), Math.min(new Date().getDate(), new Date(state.month.getFullYear(), state.month.getMonth() + 1, 0).getDate()))}"></label><label class="switch-row"><span><strong>All day</strong><small>Skip the clock for this one</small></span><input type="checkbox" name="all_day" checked><span class="switch-ui"></span></label><div class="time-fields" hidden><label>From<input name="start_time" type="time"></label><label>To<input name="end_time" type="time"></label></div><fieldset class="visibility-picker"><legend>Who can see it?</legend><div class="visibility-options"><label><input type="radio" name="visibility" value="private"><span>Only me</span></label><label><input type="radio" name="visibility" value="friends" checked><span>Friends</span></label></div></fieldset><label>Description <span class="optional">Optional</span><textarea name="description" rows="3" maxlength="1000" placeholder="A few details for your guests"></textarea></label><label>Location <span class="optional">Optional</span><input name="location" maxlength="200" placeholder="Where to meet"></label><label class="photo-field">Event photo <span class="optional">Optional</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span class="photo-preview" id="event-photo-preview" hidden></span><small>Image up to 5 MB</small></label><button class="button primary wide" type="submit">Create event <span aria-hidden="true">↗</span></button></form></section>`;
 }
@@ -282,6 +329,7 @@ function renderApp() {
   if (state.tab === 'friends') wireFriends();
   if (state.tab === 'settings') wireSettings();
   hydrateImages(app);
+  scheduleEventExpiry();
 }
 
 function renderFriends() {
