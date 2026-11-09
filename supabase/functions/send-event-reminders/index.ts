@@ -43,14 +43,18 @@ Deno.serve(async (request) => {
     }
     const recipients = [...recipientIds];
 
-    const [{ data: preferences }, { data: creator }] = await Promise.all([
-      supabase.from('notification_preferences').select('user_id,reminders_enabled,reminder_15_enabled,reminder_start_enabled').in('user_id', recipients),
+    const [preferenceResult, creatorResult] = await Promise.all([
+      supabase.from('notification_preferences').select('user_id,notifications_enabled,reminders_enabled,reminder_15_enabled,reminder_start_enabled').in('user_id', recipients),
       supabase.from('profiles').select('username').eq('id', event.creator_id).maybeSingle()
     ]);
+    if (preferenceResult.error || creatorResult.error) continue;
+    const preferences = preferenceResult.data;
+    const creator = creatorResult.data;
     const prefByUser = new Map((preferences || []).map((preference) => [preference.user_id, preference]));
 
     for (const userId of recipients) {
       const preference = prefByUser.get(userId);
+      if (preference?.notifications_enabled === false) continue;
       if (preference?.reminders_enabled === false) continue;
       if (kind === 'reminder_15' && preference?.reminder_15_enabled === false) continue;
       if (kind === 'reminder_start' && preference?.reminder_start_enabled === false) continue;
@@ -74,6 +78,11 @@ Deno.serve(async (request) => {
         url: `events-manager.html?event=${event.id}`
       });
       for (const subscription of subscriptions || []) {
+        const { data: current, error: currentError } = await supabase.from('notification_preferences')
+          .select('notifications_enabled,reminders_enabled,reminder_15_enabled,reminder_start_enabled').eq('user_id', userId).maybeSingle();
+        if (currentError || current?.notifications_enabled === false || current?.reminders_enabled === false) break;
+        if (kind === 'reminder_15' && current?.reminder_15_enabled === false) break;
+        if (kind === 'reminder_start' && current?.reminder_start_enabled === false) break;
         try {
           await webpush.sendNotification(subscription.subscription, payload);
           pushed += 1;

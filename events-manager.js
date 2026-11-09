@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { SUPABASE_URL, SUPABASE_ANON_KEY, VAPID_PUBLIC_KEY } from './supabase-config.js';
+import { createText } from './gather-text.js';
 
 const app = document.querySelector('#app');
 const modal = document.querySelector('#modal');
@@ -8,6 +9,16 @@ const validConfig = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.include
 const db = validConfig ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } }) : null;
 const state = { user: null, profile: null, tab: 'calendar', month: new Date(new Date().getFullYear(), new Date().getMonth(), 1), events: [], friends: [], requests: [], prefs: {}, filter: 'me', friendTab: 'friends', query: '', cache: new Map(), reminderTimer: null, eventExpiryTimer: null, channel: null, unreadCount: 0, seenNotifIds: new Set(), resumeCheck: null };
 const categories = ['Dinner', 'Birthday', 'Outdoor', 'Celebration', 'Games', 'Travel', 'Other'];
+let unreadMessages = 0;
+const text = createText({
+  db, getUser: () => state.user, getFriends: friendIds, avatar, hydrateImages, escapeHtml, fail,
+  navigate: (tab) => { state.tab = tab; renderApp(); },
+  onUnread: (count) => {
+    unreadMessages = count;
+    const badge = app.querySelector('[data-text-unread]');
+    if (badge) { badge.textContent = String(count); badge.hidden = count === 0; }
+  }
+});
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -143,6 +154,24 @@ function authScreen(mode = 'login', message = '', email = '') {
 
 function profileSetup() {
   app.innerHTML = `<section class="profile-setup"><a class="wordmark" href="index.html">gather<span>.</span></a><div class="setup-card"><p class="eyebrow">First things first</p><h1>Create your profile</h1><p class="form-hint">Choose a username your friends will recognize.</p><form id="profile-form"><label class="upload-avatar" for="avatar-file"><span class="avatar avatar-xl" id="avatar-preview"><span>?</span></span><span class="upload-copy"><strong>Add a profile picture</strong><small>JPG, PNG, WebP or GIF · up to 5 MB</small></span><input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><label>Username<input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" required placeholder="e.g. alexrivera"><small>3–24 letters, numbers or underscores. Unique across Gather.</small></label><button class="button primary wide" type="submit">Create profile <span aria-hidden="true">→</span></button></form></div></section>`;
+  const backButton = document.createElement('button');
+  backButton.type = 'button';
+  backButton.className = 'button quiet wide';
+  backButton.textContent = 'back to Login';
+  app.querySelector('#profile-form').after(backButton);
+  backButton.addEventListener('click', async () => {
+    backButton.disabled = true;
+    try {
+      const { error } = await db.auth.signOut({ scope: 'local' });
+      if (error) throw error;
+      state.user = null;
+      state.profile = null;
+      authScreen();
+    } catch (error) {
+      backButton.disabled = false;
+      fail(error);
+    }
+  });
   let photo;
   const input = app.querySelector('#avatar-file');
   input.addEventListener('change', () => {
@@ -202,6 +231,7 @@ async function loadApplication() {
   state.requests = requestResult.data || [];
   state.events = eventResult.data || [];
   state.unreadCount = unreadResult.count || 0;
+  await text.load().catch((error) => console.error('Text inbox unavailable:', error));
   applyTheme(state.prefs.theme || 'light');
   renderApp();
   await hydrateImages(app);
@@ -214,11 +244,14 @@ function handleDeepLink() {
   const url = new URL(location.href);
   const eventId = url.searchParams.get('event');
   const showRequests = url.searchParams.get('requests') === '1';
-  if (!eventId && !showRequests) return;
+  const peerId = url.searchParams.get('text');
+  if (!eventId && !showRequests && !peerId) return;
   url.searchParams.delete('event');
   url.searchParams.delete('requests');
+  url.searchParams.delete('text');
   history.replaceState({}, '', url);
-  if (eventId) showEvent(eventId);
+  if (peerId) text.open(peerId).catch(fail);
+  else if (eventId) showEvent(eventId);
   else { state.tab = 'friends'; state.friendTab = 'requests'; renderApp(); }
 }
 
@@ -322,12 +355,13 @@ function renderPlanner() {
 }
 
 function renderApp() {
-  const nav = [['calendar', 'Calendar'], ['friends', 'Friends'], ['settings', 'Settings']];
-  app.innerHTML = `<div class="app-shell"><aside class="sidebar"><a class="wordmark" href="index.html">gather<span>.</span></a><p class="side-label">YOUR SPACE</p><nav class="side-nav" aria-label="Main navigation">${nav.map(([key, title]) => `<button type="button" data-tab="${key}" class="${state.tab === key ? 'active' : ''}"><span class="nav-dot ${key}"></span>${title}${key === 'friends' && state.requests.some((request) => request.recipient_id === state.user.id) ? '<span class="nav-count">•</span>' : ''}</button>`).join('')}</nav><div class="sidebar-bottom"><div class="profile-chip">${avatar(state.profile)}<span><strong>${escapeHtml(state.profile.username)}</strong><small>Your profile</small></span><button type="button" class="icon-button tiny" data-action="profile" aria-label="View profile">···</button></div><a class="site-link" href="index.html">← Back to Bernat's site</a></div></aside><div class="main-column"><header class="topbar"><span class="topbar-date">${new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</span><div class="topbar-actions"><button class="icon-button" type="button" data-action="notifications" aria-label="Notifications" title="Notifications">♧<span class="notification-dot" ${state.unreadCount ? '' : 'hidden'}></span></button>${avatar(state.profile, 'avatar-small')}</div></header><main class="content">${state.tab === 'calendar' ? `<div class="calendar-layout">${renderCalendar()}${renderPlanner()}</div>` : state.tab === 'friends' ? renderFriends() : renderSettings()}</main></div></div>`;
+  const nav = [['calendar', 'Calendar'], ['friends', 'Friends'], ['text', 'Text'], ['settings', 'Settings']];
+  app.innerHTML = `<div class="app-shell"><aside class="sidebar"><a class="wordmark" href="index.html">gather<span>.</span></a><p class="side-label">YOUR SPACE</p><nav class="side-nav" aria-label="Main navigation">${nav.map(([key, title]) => `<button type="button" data-tab="${key}" class="${state.tab === key ? 'active' : ''}"><span class="nav-dot ${key}" aria-hidden="true"></span>${title}${key === 'text' ? `<span class="unread-badge" data-text-unread ${unreadMessages ? '' : 'hidden'}>${unreadMessages}</span>` : ''}${key === 'friends' && state.requests.some((request) => request.recipient_id === state.user.id) ? '<span class="nav-count">•</span>' : ''}</button>`).join('')}</nav><div class="sidebar-bottom"><div class="profile-chip">${avatar(state.profile)}<span><strong>${escapeHtml(state.profile.username)}</strong><small>Your profile</small></span><button type="button" class="icon-button tiny" data-action="profile" aria-label="View profile">···</button></div><a class="site-link" href="index.html">← Back to Bernat's site</a></div></aside><div class="main-column"><header class="topbar"><span class="topbar-date">${new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())}</span><div class="topbar-actions"><button class="icon-button" type="button" data-action="notifications" aria-label="Notifications" title="Notifications">♧<span class="notification-dot" ${state.unreadCount ? '' : 'hidden'}></span></button>${avatar(state.profile, 'avatar-small')}</div></header><main class="content">${state.tab === 'calendar' ? `<div class="calendar-layout">${renderCalendar()}${renderPlanner()}</div>` : state.tab === 'friends' ? renderFriends() : state.tab === 'text' ? text.render() : renderSettings()}</main></div></div>`;
   wireSharedEvents();
   if (state.tab === 'calendar') wireCalendar();
   if (state.tab === 'friends') wireFriends();
   if (state.tab === 'settings') wireSettings();
+  if (state.tab === 'text') text.wire();
   hydrateImages(app);
   scheduleEventExpiry();
 }
@@ -341,7 +375,7 @@ function renderFriends() {
 function renderFriendList() {
   const ids = friendIds();
   if (!ids.length) return '<div class="empty-state"><span class="empty-art">◎</span><h2>Your circle starts here</h2><p>You don’t have any friends yet. Find your people by username.</p><button class="button secondary" type="button" data-action="search">Find friends <span aria-hidden="true">⌕</span></button></div>';
-  return `<div class="people-list">${ids.map((id) => `<article class="person-row" data-person-id="${id}"><span class="person-avatar" data-person-avatar="${id}"></span><span class="person-info" data-person-info="${id}"><strong>Loading profile…</strong><small>Gather friend</small></span><button class="button quiet" type="button" data-remove-friend="${id}">Remove</button></article>`).join('')}</div>`;
+  return `<div class="people-list">${ids.map((id) => `<article class="person-row" data-person-id="${id}"><span class="person-avatar" data-person-avatar="${id}"></span><span class="person-info" data-person-info="${id}"><strong>Loading profile…</strong><small>Gather friend</small></span><button class="button secondary small-button" type="button" data-text-friend="${id}">Text</button><button class="button quiet" type="button" data-remove-friend="${id}">Remove</button></article>`).join('')}</div>`;
 }
 
 function renderRequests(incoming, outgoing) {
@@ -456,13 +490,15 @@ async function refreshData() {
   state.requests = requests.data || [];
   state.prefs = preferences.data || {};
   state.unreadCount = unread.count || 0;
+  await text.load().catch((error) => console.error('Text inbox unavailable:', error));
   renderApp();
   await hydrateImages(app);
 }
 
 async function wireFriends() {
   app.querySelectorAll('[data-friend-tab]').forEach((button) => button.addEventListener('click', () => { state.friendTab = button.dataset.friendTab; renderApp(); }));
-  app.querySelector('[data-action="search"]')?.addEventListener('click', () => showSearch());
+  app.querySelectorAll('[data-action="search"]').forEach((button) => button.addEventListener('click', () => showSearch()));
+  app.querySelectorAll('[data-text-friend]').forEach((button) => button.addEventListener('click', () => text.open(button.dataset.textFriend).catch(fail)));
   const ids = [...new Set([...friendIds(), ...state.requests.map((request) => request.requester_id === state.user.id ? request.recipient_id : request.requester_id)])];
   await loadPeople(ids);
   app.querySelectorAll('[data-remove-friend]').forEach((button) => button.addEventListener('click', async () => {
@@ -647,6 +683,12 @@ function applyTheme(theme) {
 }
 
 function wireSettings() {
+  const notificationSection = app.querySelector('.settings-grid > .settings-section:nth-child(2)');
+  notificationSection.querySelector('.panel-heading').insertAdjacentHTML('afterend', toggleSetting(
+    'notifications_enabled', state.prefs.notifications_enabled !== false ? 'Notifications Enabled' : 'Notifications Disabled',
+    'All notification delivery', state.prefs.notifications_enabled !== false
+  ));
+  app.querySelector('[data-action="permission"]').disabled = state.prefs.notifications_enabled === false;
   const deleteButton = app.querySelector('[data-action="delete-account"]');
   if (deleteButton) {
     const signOutButton = document.createElement('button');
@@ -660,7 +702,9 @@ function wireSettings() {
         const { error } = await db.auth.signOut({ scope: 'local' });
         if (error) throw error;
         clearInterval(state.reminderTimer);
+        clearTimeout(state.eventExpiryTimer);
         await state.channel?.unsubscribe();
+        text.clear();
         clearAssetCache();
         state.user = null;
         state.profile = null;
@@ -692,9 +736,15 @@ function wireSettings() {
     const { error } = await db.from('notification_preferences').upsert({ user_id: state.user.id, [key]: input.checked }, { onConflict: 'user_id' });
     if (error) { input.checked = !input.checked; return fail(error); }
     state.prefs[key] = input.checked;
+    if (key === 'notifications_enabled') {
+      input.closest('label').querySelector('strong').textContent = input.checked ? 'Notifications Enabled' : 'Notifications Disabled';
+      app.querySelector('[data-action="permission"]').disabled = !input.checked;
+      if (!input.checked) await disableBrowserNotifications();
+    }
     toast('Notification preference saved.');
   }));
   app.querySelector('[data-action="permission"]').addEventListener('click', async () => {
+    if (state.prefs.notifications_enabled === false) return;
     if (!('Notification' in window)) return toast('Browser notifications are not supported here.', true);
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') return toast('Browser notifications were not enabled.', true);
@@ -702,6 +752,7 @@ function wireSettings() {
     if (!VAPID_PUBLIC_KEY || VAPID_PUBLIC_KEY.includes('YOUR_VAPID')) return toast('Add the VAPID public key to supabase-config.js to enable background push.', true);
     try {
       const registration = await navigator.serviceWorker.register('./service-worker.js');
+      await navigator.serviceWorker.ready;
       const existing = await registration.pushManager.getSubscription();
       const subscription = existing || await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: decodeBase64Url(VAPID_PUBLIC_KEY) });
       const { error } = await db.from('push_subscriptions').upsert({ user_id: state.user.id, endpoint: subscription.endpoint, subscription: subscription.toJSON() }, { onConflict: 'endpoint' });
@@ -732,6 +783,19 @@ function wireSettings() {
   });
 }
 
+async function disableBrowserNotifications() {
+  try {
+    const registration = await navigator.serviceWorker?.getRegistration();
+    const subscription = await registration?.pushManager?.getSubscription();
+    if (!subscription) return;
+    const { error } = await db.from('push_subscriptions').delete().eq('user_id', state.user.id).eq('endpoint', subscription.endpoint);
+    if (error) throw error;
+    await subscription.unsubscribe();
+  } catch (error) {
+    console.warn('Notifications disabled in your account; browser subscription cleanup failed.', error);
+  }
+}
+
 function decodeBase64Url(value) {
   const padding = '='.repeat((4 - value.length % 4) % 4);
   const decoded = atob((value + padding).replace(/-/g, '+').replace(/_/g, '/'));
@@ -747,16 +811,23 @@ async function confirmDeleteAccount() {
 }
 
 async function showNotifications() {
-  const { data, error } = await db.from('notifications').select('id,event_id,friend_request_id,kind,created_at,read_at,events(name,creator:profiles!events_creator_id_fkey(username)),friend_requests(requester:profiles!friend_requests_requester_id_fkey(username))').order('created_at', { ascending: false }).limit(30);
+  const { data, error } = await db.from('notifications').select('id,event_id,friend_request_id,message_id,kind,created_at,read_at,events(name,creator:profiles!events_creator_id_fkey(username)),friend_requests(requester:profiles!friend_requests_requester_id_fkey(username)),messages(sender_id,body,sender:profiles!messages_sender_id_fkey(username))').order('created_at', { ascending: false }).limit(30);
   if (error) return fail(error);
   const rows = data || [];
   modal.innerHTML = `<div class="modal-heading"><div><p class="eyebrow">Your updates</p><h2>Notifications</h2></div><button class="icon-button" type="button" data-close aria-label="Close">×</button></div><div class="notification-list">${rows.length ? rows.map((item) => `<button class="notification-row ${item.read_at ? '' : 'unread'}" type="button" data-notification-event="${item.event_id || ''}" data-notification-kind="${item.kind}" data-notification-id="${item.id}"><span class="notification-symbol">${item.kind === 'friend_request' ? '↗' : '◷'}</span><span><strong>${item.kind === 'friend_request' ? `@${escapeHtml(item.friend_requests?.requester?.username || 'Someone')} sent you a friend request` : `${escapeHtml(item.events?.name || 'Event reminder')}${item.kind === 'reminder_15' ? ' starts in 15 minutes' : ' is starting now'} · @${escapeHtml(item.events?.creator?.username || 'friend')}`}</strong><small>${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.created_at))}</small></span></button>`).join('') : '<p class="search-empty">You’re all caught up.</p>'}</div>`;
   modal.showModal();
+  rows.filter((item) => item.kind === 'message').forEach((item) => {
+    const row = modal.querySelector(`[data-notification-id="${item.id}"]`);
+    row.querySelector('strong').textContent = item.messages
+      ? `@${item.messages.sender?.username || 'Friend'}: ${item.messages.body.slice(0, 100)}` : 'Message no longer available';
+    row.dataset.messagePeer = item.messages?.sender_id || '';
+  });
   modal.querySelector('[data-close]').addEventListener('click', () => modal.close());
   modal.querySelectorAll('[data-notification-id]').forEach((button) => button.addEventListener('click', async () => {
     await db.from('notifications').update({ read_at: new Date().toISOString() }).eq('id', button.dataset.notificationId);
     const eventId = button.dataset.notificationEvent;
-    if (eventId) { modal.close(); showEvent(eventId); }
+    if (button.dataset.messagePeer) { modal.close(); text.open(button.dataset.messagePeer).catch(fail); }
+    else if (eventId) { modal.close(); showEvent(eventId); }
     else if (button.dataset.notificationKind === 'friend_request') { modal.close(); state.tab = 'friends'; state.friendTab = 'requests'; renderApp(); }
   }));
   const unread = rows.filter((item) => !item.read_at);
@@ -772,7 +843,7 @@ function startReminders() {
 }
 
 async function checkReminders() {
-  if (!state.prefs.reminders_enabled) return;
+  if (state.prefs.notifications_enabled === false || !state.prefs.reminders_enabled || !state.user) return;
   const now = Date.now();
   for (const event of state.events) {
     if (event.all_day || event.creator_id !== state.user.id && !friendIds().includes(event.creator_id)) continue;
@@ -782,6 +853,7 @@ async function checkReminders() {
     const { data, error } = await db.from('notifications').insert({ user_id: state.user.id, event_id: event.id, kind }).select('id').maybeSingle();
     if (error?.code === '23505') continue;
     if (error || !data) continue;
+    if (state.prefs.notifications_enabled === false) continue;
     state.seenNotifIds.add(data.id);
     let creator = event.creator_id === state.user.id ? state.profile : null;
     if (!creator) { try { creator = await getPerson(event.creator_id); } catch { creator = { username: 'A friend' }; } }
@@ -819,19 +891,43 @@ function playNotificationSound() {
 function setupRealtime() {
   if (state.channel) return;
   state.channel = db.channel('gather-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => text.receive().catch(fail))
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'notification_preferences', filter: `user_id=eq.${state.user.id}` }, (payload) => {
+      state.prefs = payload.new;
+      if (state.tab === 'settings') renderApp();
+    })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'events' }, () => refreshData().catch(fail))
     .on('postgres_changes', { event: '*', schema: 'public', table: 'friendships' }, () => refreshData().catch(fail))
     .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `recipient_id=eq.${state.user.id}` }, () => refreshData().catch(fail))
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${state.user.id}` }, (payload) => {
+      if (state.prefs.notifications_enabled === false) return;
       state.unreadCount += 1;
       app.querySelector('.notification-dot')?.removeAttribute('hidden');
       if (state.seenNotifIds.has(payload.new.id)) return;
       state.seenNotifIds.add(payload.new.id);
-      if (payload.new.kind === 'friend_request') toast('You have a new friend request.');
-      else toast('You have a new event reminder.');
-      if (state.prefs.notification_sound) playNotificationSound();
+      presentNotification(payload.new).catch(fail);
     })
     .subscribe();
+}
+
+async function presentNotification(notification) {
+  if (state.prefs.notifications_enabled === false) return;
+  if (notification.kind === 'message') {
+    const { data, error } = await db.from('messages').select('sender_id,body,sender:profiles!messages_sender_id_fkey(username)').eq('id', notification.message_id).maybeSingle();
+    if (error) throw error;
+    if (!data || state.prefs.notifications_enabled === false) return;
+    const title = `@${data.sender?.username || 'Friend'}`;
+    toast(`${title}: ${data.body.slice(0, 100)}`);
+    const registration = await navigator.serviceWorker?.getRegistration();
+    const subscription = await registration?.pushManager?.getSubscription();
+    if (!subscription && 'Notification' in window && Notification.permission === 'granted') {
+      const options = { body: data.body.slice(0, 100), tag: `message-${notification.message_id}`, data: { url: `events-manager.html?text=${data.sender_id}` } };
+      if (registration) await registration.showNotification(title, options);
+      else { const alert = new Notification(title, options); alert.onclick = () => text.open(data.sender_id).catch(fail); }
+    }
+  } else if (notification.kind === 'friend_request' && state.prefs.friend_request_notifications !== false) toast('You have a new friend request.');
+  else if (notification.kind !== 'friend_request' && state.prefs.reminders_enabled !== false) toast('You have a new event reminder.');
+  if (state.prefs.notifications_enabled !== false && state.prefs.notification_sound) playNotificationSound();
 }
 
 db?.auth.onAuthStateChange((event, session) => {
@@ -867,6 +963,7 @@ async function syncSessionOnResume() {
   const needsLoad = state.user?.id !== nextUser.id || !state.profile;
   state.user = nextUser;
   if (needsLoad) await loadApplication();
+  else if (state.tab === 'text') await text.receive();
   else await refreshData();
 }
 

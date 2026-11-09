@@ -29,12 +29,18 @@ Deno.serve(async (request) => {
     .maybeSingle();
   if (requestError || !friendRequest) return Response.json({ error: 'Request not found' }, { status: 404, headers: corsHeaders });
 
-  const [{ data: preferences }, { data: sender }, { data: subscriptions }] = await Promise.all([
-    admin.from('notification_preferences').select('friend_request_notifications').eq('user_id', friendRequest.recipient_id).maybeSingle(),
+  const [preferenceResult, senderResult, subscriptionResult] = await Promise.all([
+    admin.from('notification_preferences').select('notifications_enabled,friend_request_notifications').eq('user_id', friendRequest.recipient_id).maybeSingle(),
     admin.from('profiles').select('username').eq('id', friendRequest.requester_id).maybeSingle(),
     admin.from('push_subscriptions').select('id,subscription').eq('user_id', friendRequest.recipient_id)
   ]);
-  if (preferences?.friend_request_notifications === false || !subscriptions?.length) return Response.json({ sent: 0 }, { headers: corsHeaders });
+  if (preferenceResult.error || senderResult.error || subscriptionResult.error) {
+    return Response.json({ error: 'Could not load notification preferences' }, { status: 500, headers: corsHeaders });
+  }
+  const preferences = preferenceResult.data;
+  const sender = senderResult.data;
+  const subscriptions = subscriptionResult.data;
+  if (preferences?.notifications_enabled === false || preferences?.friend_request_notifications === false || !subscriptions?.length) return Response.json({ sent: 0 }, { headers: corsHeaders });
 
   const vapidPublicKey = Deno.env.get('VAPID_PUBLIC_KEY');
   const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY');
@@ -49,6 +55,9 @@ Deno.serve(async (request) => {
   });
   let sent = 0;
   for (const subscription of subscriptions) {
+    const { data: current, error: currentError } = await admin.from('notification_preferences')
+      .select('notifications_enabled,friend_request_notifications').eq('user_id', friendRequest.recipient_id).maybeSingle();
+    if (currentError || current?.notifications_enabled === false || current?.friend_request_notifications === false) break;
     try { await webpush.sendNotification(subscription.subscription, payload); sent += 1; }
     catch (error) {
       const statusCode = typeof error === 'object' && error !== null && 'statusCode' in error ? error.statusCode : undefined;
