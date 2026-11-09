@@ -153,12 +153,13 @@ function authScreen(mode = 'login', message = '', email = '') {
 }
 
 function profileSetup() {
+  const setupUserId = state.user?.id;
   app.innerHTML = `<section class="profile-setup"><a class="wordmark" href="index.html">gather<span>.</span></a><div class="setup-card"><p class="eyebrow">First things first</p><h1>Create your profile</h1><p class="form-hint">Choose a username your friends will recognize.</p><form id="profile-form"><label class="upload-avatar" for="avatar-file"><span class="avatar avatar-xl" id="avatar-preview"><span>?</span></span><span class="upload-copy"><strong>Add a profile picture</strong><small>JPG, PNG, WebP or GIF · up to 5 MB</small></span><input id="avatar-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><label>Username<input name="username" autocomplete="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" required placeholder="e.g. alexrivera"><small>3–24 letters, numbers or underscores. Unique across Gather.</small></label><button class="button primary wide" type="submit">Create profile <span aria-hidden="true">→</span></button></form></div></section>`;
   const backButton = document.createElement('button');
   backButton.type = 'button';
-  backButton.className = 'button quiet wide';
+  backButton.className = 'button secondary wide';
   backButton.textContent = 'back to Login';
-  app.querySelector('#profile-form').after(backButton);
+  app.querySelector('#profile-form').before(backButton);
   backButton.addEventListener('click', async () => {
     backButton.disabled = true;
     try {
@@ -191,19 +192,37 @@ function profileSetup() {
     button.disabled = true;
     const username = new FormData(event.currentTarget).get('username').trim();
     try {
+      const { data: authData, error: authError } = await db.auth.getUser();
+      if (authError && authError.status !== 401 && authError.status !== 403 && authError.name !== 'AuthSessionMissingError') throw authError;
+      if (authError || !authData?.user || authData.user.id !== setupUserId) {
+        const sessionError = new Error('Your session is no longer valid. Please sign in again before creating your profile.');
+        sessionError.code = 'profile_session_invalid';
+        throw sessionError;
+      }
+      const user = authData.user;
+      state.user = user;
       let avatarPath = null;
       if (photo) {
-        avatarPath = `${state.user.id}/${crypto.randomUUID()}`;
+        avatarPath = `${user.id}/${crypto.randomUUID()}`;
         const { error } = await db.storage.from('avatars').upload(avatarPath, photo, { contentType: photo.type, upsert: false });
         if (error) throw error;
       }
-      const { error } = await db.from('profiles').insert({ id: state.user.id, username, avatar_url: avatarPath });
+      const { error } = await db.from('profiles').insert({ id: user.id, username, avatar_url: avatarPath });
       if (error?.code === '23505') throw new Error('That username is already taken. Try another one.');
       if (error) throw error;
       await ensurePreferences();
       await loadApplication();
     } catch (error) {
       button.disabled = false;
+      if (error.code === 'profile_session_invalid' || (error.code === '23503' && /profiles_id_fkey/.test(error.message || ''))) {
+        const { error: signOutError } = await db.auth.signOut({ scope: 'local' });
+        if (signOutError) { fail(signOutError); return; }
+        state.user = null;
+        state.profile = null;
+        authScreen();
+        toast('Your saved session is no longer valid. Please sign in again.', true);
+        return;
+      }
       fail(error);
     }
   });

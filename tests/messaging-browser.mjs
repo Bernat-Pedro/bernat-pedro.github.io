@@ -16,6 +16,7 @@ function from(table){
  if(action==='upsert'&&table==='notification_preferences'){Object.assign(store.prefs,values);rows=[store.prefs];save(store)}
  if(action==='update'){rows.forEach(row=>Object.assign(row,values));save(store)}
  if(action==='insert'&&table==='messages'){if(window.testFailSend){resolve({data:null,error:{message:'Test send failed'}});return}const row={...values,id:crypto.randomUUID(),created_at:new Date().toISOString(),read_at:null};store.messages.push(row);save(store);rows=[row]}
+ if(action==='insert'&&table==='profiles'){window.testProfileWrites=(window.testProfileWrites||0)+1;if(window.testProfileFkError){resolve({data:null,error:{code:'23503',message:'insert on profiles violates foreign key constraint profiles_id_fkey'}});return}const row={...values,created_at:new Date().toISOString()};profiles.push(row);rows=[row]}
  if(table==='notifications')rows=rows.map(row=>({...row,messages:row.message_id?{sender_id:peer,body:'Incoming hello',sender:{username:'Bob'}}:null}));
  resolve({data:head?null:returnOne?(rows[0]||null):rows,error:null,count:rows.length});}catch(error){reject(error)}}};return builder;
 }
@@ -144,13 +145,47 @@ try {
   console.log('PASS empty-state/header friend search and date/All day/From-To controls at desktop, tablet portrait/landscape, and phone widths');
   const setupSdk = sdk
     .replace("{id:own,username:'Alice',created_at:'2026-01-01'},", '')
-    .replace('auth:{onAuthStateChange(){}', 'auth:{signOut:async()=>({error:null}),onAuthStateChange(){}');
+    .replace('auth:{onAuthStateChange(){}', "auth:{signOut:async()=>({error:null}),getUser:async()=>window.testAuthNetworkError?{data:{user:null},error:{status:0,message:'Network unavailable'}}:window.testStaleAccount?{data:{user:null},error:{status:403,message:'User no longer exists'}}:{data:{user:{id:own}},error:null},onAuthStateChange(){}");
   await page.route('https://esm.sh/@supabase/supabase-js@2', (route) => route.fulfill({ contentType: 'application/javascript', body: setupSdk }));
   await page.goto(`${base}/events-manager.html`);
   await page.getByRole('heading', { name: 'Create your profile' }).waitFor();
   await page.getByRole('button', { name: 'back to Login', exact: true }).click();
   await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
   await page.getByRole('button', { name: 'Create an account', exact: true }).waitFor();
+  for (const [width, height] of [[768, 1024], [820, 1180], [1024, 768], [820, 600]]) {
+    await page.setViewportSize({ width, height });
+    await page.goto(`${base}/events-manager.html`);
+    const back = page.getByRole('button', { name: 'back to Login', exact: true });
+    await back.waitFor();
+    const bounds = await back.boundingBox();
+    assert.ok(bounds && bounds.y >= 0 && bounds.y + bounds.height <= height, `Back to Login visible without scrolling at ${width}x${height}`);
+    await back.click();
+    await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
+  }
   assert.deepEqual(errors, []);
   console.log('PASS incomplete profile setup can return to Login without submitting the form');
+  await page.setViewportSize({ width: 820, height: 1180 });
+  await page.goto(`${base}/events-manager.html`);
+  await page.locator('#profile-form [name="username"]').fill('AliceNew');
+  await page.evaluate(() => { window.testAuthNetworkError = true; });
+  await page.locator('#profile-form button[type="submit"]').click();
+  await page.locator('#toast', { hasText: 'Network unavailable' }).waitFor();
+  assert.equal(await page.locator('#profile-form [name="username"]').inputValue(), 'AliceNew');
+  assert.equal(await page.evaluate(() => window.testProfileWrites || 0), 0);
+  await page.evaluate(() => { window.testAuthNetworkError = false; window.testStaleAccount = true; });
+  await page.locator('#profile-form button[type="submit"]').click();
+  await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
+  assert.equal(await page.evaluate(() => window.testProfileWrites || 0), 0);
+  await page.goto(`${base}/events-manager.html`);
+  await page.locator('#profile-form [name="username"]').fill('AliceNew');
+  await page.evaluate(() => { window.testProfileFkError = true; });
+  await page.locator('#profile-form button[type="submit"]').click();
+  await page.getByRole('heading', { name: 'Sign in', exact: true }).waitFor();
+  await page.goto(`${base}/events-manager.html`);
+  await page.locator('#profile-form [name="username"]').fill('AliceNew');
+  await page.locator('#profile-form button[type="submit"]').click();
+  await page.locator('[data-tab="calendar"]').waitFor();
+  assert.equal(await page.evaluate(() => window.testProfileWrites), 1);
+  assert.deepEqual(errors, []);
+  console.log('PASS iPad profile creation validates Auth, preserves drafts on network errors, recovers deleted sessions, and saves valid accounts');
 } finally { await browser.close(); }
