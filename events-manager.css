@@ -169,10 +169,11 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .panel-heading { display: block; margin-bottom: 20px; }
 .stack-form { display: grid; gap: 14px; }
 .stack-form > label { min-width: 0; gap: 7px; margin: 0; }
-.stack-form > label.switch-row { width: max-content; max-width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); cursor: pointer; }
+.stack-form > label.switch-row { width: fit-content; max-width: 100%; min-height: 44px; display: inline-flex; align-items: center; justify-content: flex-start; gap: 16px; padding: 0; border: 0; background: transparent; cursor: pointer; touch-action: manipulation; }
 .stack-form > label.switch-row > span:first-child small { display: none; }
 .stack-form > label.switch-row .switch-ui { margin-left: auto; }
-.stack-form > label.switch-row input { right: 11px; }
+.stack-form > label.switch-row input { right: 0; top: 50%; transform: translateY(-50%); }
+.stack-form > label.switch-row .switch-ui { display: inline-block; width: 39px; min-width: 39px; }
 .stack-form .visibility-picker { grid-column: 1 / -1; }
 .stack-form label, .stack-form .time-fields label { font-size: .8rem; }
 .stack-form input:not([type="checkbox"]), .stack-form select, .stack-form textarea { min-height: 40px; padding: 9px 10px; font-size: .83rem; font-weight: 400; }
@@ -190,7 +191,9 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .switch-row input:focus-visible + .switch-ui, .toggle-setting input:focus-visible + .switch-ui { outline: 3px solid color-mix(in srgb, var(--coral) 70%, transparent); outline-offset: 3px; }
 .time-fields { min-width: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .time-fields label { min-width: 0; display: grid; gap: 7px; margin: 0; }
-.stack-form input[type="date"], .stack-form input[type="time"] { box-sizing: border-box; min-width: 0; width: 100%; height: 44px; }
+.stack-form input[type="date"], .stack-form input[type="time"] { -webkit-appearance: none; appearance: none; display: block; box-sizing: border-box; min-width: 0; max-width: 100%; width: 100%; height: 44px; margin: 0; font-size: 1rem; line-height: 1.25; text-align: left; color: var(--ink); background: var(--surface); }
+.stack-form input[type="date"]::-webkit-date-and-time-value, .stack-form input[type="time"]::-webkit-date-and-time-value { min-height: 1.25em; text-align: left; }
+.stack-form input[type="date"]::-webkit-datetime-edit, .stack-form input[type="time"]::-webkit-datetime-edit { padding: 0; }
 .stack-form > label.switch-row { justify-self: start; align-self: start; }
 .visibility-picker { min-width: 0; margin: 0; padding: 0; border: 0; }
 .visibility-picker legend { margin-bottom: 7px; font-size: .8rem; font-weight: 700; }
@@ -337,7 +340,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   .calendar-panel, .planner-panel { padding: 17px; }
   .day-cell { min-height: 94px; padding: 5px 4px; }
 }
-@media (max-width: 900px) {
+@media (max-width: 1180px) {
   .app-shell { display: block; padding-bottom: 64px; }
   .sidebar { position: fixed; z-index: 5; top: auto; right: 0; bottom: 0; left: 0; width: 100%; height: 64px; display: block; padding: 0; border-top: 1px solid var(--line); border-right: 0; background: var(--surface); }
   .sidebar .wordmark, .side-label, .sidebar-bottom { display: none; }

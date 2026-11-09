@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { pathToFileURL } from 'node:url';
 const modules = process.env.GATHER_TEST_MODULES || '/tmp/gather-validation/node_modules';
-const { chromium } = await import(pathToFileURL(`${modules}/playwright/index.mjs`).href);
+const { chromium, webkit } = await import(pathToFileURL(`${modules}/playwright/index.mjs`).href);
 const base = process.env.GATHER_TEST_URL || 'http://127.0.0.1:8000';
 const sdk = `
 const own='10000000-0000-0000-0000-000000000001', peer='20000000-0000-0000-0000-000000000002';
@@ -11,7 +11,7 @@ const save=data=>sessionStorage.setItem('gather-test',JSON.stringify(data));
 window.testHandlers=[];
 function from(table){
  let action='select',values,filters=[],returnOne=false,head=false;
- const builder={select(_cols,options){head=options?.head;return builder},eq(key,value){filters.push(row=>row[key]===value);return builder},in(key,list){filters.push(row=>list.includes(row[key]));return builder},is(key,value){filters.push(row=>(row[key]??null)===value);return builder},or(){return builder},order(){return builder},limit(){return builder},insert(data){action='insert';values=data;return builder},upsert(data){action='upsert';values=data;return builder},update(data){action='update';values=data;return builder},delete(){action='delete';return builder},single(){returnOne=true;return builder},maybeSingle(){returnOne=true;return builder},then(resolve,reject){try{let store=saved();let rows=table==='profiles'?profiles:table==='friendships'?[{user_low:own,user_high:peer}]:table==='notification_preferences'?[store.prefs]:table==='messages'?store.messages:table==='notifications'?store.notifications:[];
+ const builder={select(_cols,options){head=options?.head;return builder},eq(key,value){filters.push(row=>row[key]===value);return builder},in(key,list){filters.push(row=>list.includes(row[key]));return builder},is(key,value){filters.push(row=>(row[key]??null)===value);return builder},or(){return builder},order(){return builder},limit(){return builder},insert(data){action='insert';values=data;return builder},upsert(data){action='upsert';values=data;return builder},update(data){action='update';values=data;return builder},delete(){action='delete';return builder},single(){returnOne=true;return builder},maybeSingle(){returnOne=true;return builder},then(resolve,reject){try{let store=saved();let rows=table==='profiles'?profiles:table==='friendships'?(store.removed?[]:[{user_low:own,user_high:peer}]):table==='notification_preferences'?[store.prefs]:table==='messages'?store.messages:table==='notifications'?store.notifications:[];
  rows=rows.filter(row=>filters.every(filter=>filter(row)));
  if(action==='upsert'&&table==='notification_preferences'){Object.assign(store.prefs,values);rows=[store.prefs];save(store)}
  if(action==='update'){rows.forEach(row=>Object.assign(row,values));save(store)}
@@ -20,11 +20,13 @@ function from(table){
  if(table==='notifications')rows=rows.map(row=>({...row,messages:row.message_id?{sender_id:peer,body:'Incoming hello',sender:{username:'Bob'}}:null}));
  resolve({data:head?null:returnOne?(rows[0]||null):rows,error:null,count:rows.length});}catch(error){reject(error)}}};return builder;
 }
-export function createClient(){return {from,rpc:async()=>{const store=saved();const last=store.messages.at(-1);return {data:last?[{friend_id:peer,message_id:last.id,body:last.body,created_at:last.created_at,unread_count:store.messages.filter(row=>row.recipient_id===own&&!row.read_at).length}]:[],error:null}},auth:{onAuthStateChange(){},getSession:async()=>({data:{session:{user:{id:own}}}})},channel(){return {on(_kind,filter,callback){window.testHandlers.push({filter,callback});return this},subscribe(){return this},unsubscribe:async()=>{}}},functions:{invoke:async()=>({data:{sent:0},error:null})},storage:{from(){return {download:async()=>({error:{message:'No test image'}})}}}}}
+export function createClient(){return {from,rpc:async(name)=>{const store=saved();if(name==='remove_friend'){store.removed=true;save(store);return {data:null,error:null}}const last=store.messages.at(-1);return {data:last?[{friend_id:peer,message_id:last.id,body:last.body,created_at:last.created_at,unread_count:store.messages.filter(row=>row.recipient_id===own&&!row.read_at).length}]:[],error:null}},auth:{onAuthStateChange(){},getSession:async()=>({data:{session:{user:{id:own}}}})},channel(){return {on(_kind,filter,callback){window.testHandlers.push({filter,callback});return this},subscribe(){return this},unsubscribe:async()=>{}}},functions:{invoke:async()=>({data:{sent:0},error:null})},storage:{from(){return {download:async()=>({error:{message:'No test image'}})}}}}}
 window.testIncoming=async()=>{const store=saved();const message={id:crypto.randomUUID(),sender_id:peer,recipient_id:own,body:'Incoming hello',created_at:new Date().toISOString(),read_at:null};store.messages.push(message);save(store);for(const h of window.testHandlers.filter(h=>h.filter.table==='messages'))await h.callback({new:message});};
 window.testNotification=async()=>{const store=saved();store.notifications.push({id:crypto.randomUUID(),user_id:own,message_id:store.messages.at(-1).id,kind:'message',created_at:new Date().toISOString(),read_at:null});save(store)};
+window.testRemoveFriend=async()=>{const store=saved();store.removed=true;save(store);for(const h of window.testHandlers.filter(h=>h.filter.table==='friendships'))await h.callback({eventType:'DELETE'});};
 `;
-const browser = await chromium.launch({ headless: true });
+const engine = process.env.GATHER_TEST_BROWSER === 'webkit' ? webkit : chromium;
+const browser = await engine.launch({ headless: true });
 try {
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   await context.route('https://esm.sh/@supabase/supabase-js@2', (route) => route.fulfill({ contentType: 'application/javascript', body: sdk }));
@@ -95,11 +97,32 @@ try {
   }
   assert.deepEqual(errors, []);
   console.log('PASS desktop/tablet/mobile Text layout, no page errors; screenshots saved under /tmp/gather-text-*.png');
+  await page.locator('[data-tab="friends"]').click();
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.locator('[data-remove-friend]').click();
+  await page.getByRole('heading', { name: 'Your circle starts here' }).waitFor();
+  await page.locator('[data-tab="text"]').click();
+  await page.getByRole('heading', { name: 'No conversations yet' }).waitFor();
+  assert.equal(await page.locator('[data-chat-peer]').count(), 0);
+  assert.equal(await page.locator('[data-text-unread]').isVisible(), false);
+  await page.reload();
+  await page.locator('[data-tab="text"]').click();
+  await page.getByRole('heading', { name: 'No conversations yet' }).waitFor();
+  await page.evaluate(() => { const data = JSON.parse(sessionStorage.getItem('gather-test')); data.removed = false; sessionStorage.setItem('gather-test', JSON.stringify(data)); });
+  await page.reload();
+  await page.locator('[data-tab="friends"]').click();
+  await page.locator('[data-text-friend]').click();
+  await page.locator('.chat-composer').waitFor();
+  await page.evaluate(() => window.testRemoveFriend());
+  await page.getByRole('heading', { name: 'No conversations yet' }).waitFor();
+  assert.equal(await page.locator('.chat-composer').count(), 0);
+  assert.ok(await page.evaluate(() => JSON.parse(sessionStorage.getItem('gather-test')).messages.length > 0));
+  console.log('PASS removed friends disappear from Text and unread counts after reload; realtime removal closes active chat without deleting messages');
   const friendlessSdk = sdk
-    .replace("table==='friendships'?[{user_low:own,user_high:peer}]", "table==='friendships'?[]")
+    .replace("table==='friendships'?(store.removed?[]:[{user_low:own,user_high:peer}])", "table==='friendships'?[]")
     .replace('or(){return builder}', "neq(key,value){filters.push(row=>row[key]!==value);return builder},ilike(key,value){filters.push(row=>row[key].toLowerCase().includes(value.replaceAll('%','').toLowerCase()));return builder},or(){return builder}");
   await page.route('https://esm.sh/@supabase/supabase-js@2', (route) => route.fulfill({ contentType: 'application/javascript', body: friendlessSdk }));
-  for (const [width, height] of [[1280, 900], [1024, 768], [820, 1180], [768, 1024], [390, 844]]) {
+  for (const [width, height] of [[1366, 1024], [1280, 900], [1180, 820], [1024, 768], [820, 1180], [768, 1024], [390, 844]]) {
     await page.setViewportSize({ width, height });
     await page.goto(`${base}/events-manager.html`);
     await page.locator('[data-tab="friends"]').click();

@@ -28,8 +28,7 @@ export function createText({ db, getUser, getFriends, avatar, hydrateImages, esc
       throw new Error(loadError);
     }
     loadError = '';
-    const ids = [...new Set([...getFriends(), ...(data || []).map((item) => item.friend_id)])];
-    if (peerId) ids.push(peerId);
+    const ids = [...getFriends()];
     let profiles = [];
     if (ids.length) {
       const result = await db.from('profiles').select('id,username,avatar_url,created_at').in('id', ids);
@@ -37,7 +36,19 @@ export function createText({ db, getUser, getFriends, avatar, hydrateImages, esc
       profiles = result.data || [];
     }
     if (getUser()?.id !== user.id) return;
-    inbox = data || [];
+    const friends = new Set(getFriends());
+    inbox = (data || []).filter((item) => friends.has(item.friend_id));
+    if (peerId && !friends.has(peerId)) {
+      generation += 1;
+      peerId = null;
+      history = [];
+      cursor = null;
+      more = false;
+      draft = '';
+      loading = false;
+      errorMessage = '';
+      sendError = '';
+    }
     people = new Map(profiles.map((profile) => [profile.id, profile]));
     updateUnread();
   }
@@ -86,6 +97,7 @@ export function createText({ db, getUser, getFriends, avatar, hydrateImages, esc
   function paint(scroll = false) {
     const root = document.querySelector('.text-view');
     if (!root) return;
+    root.classList.toggle('chat-open', Boolean(peerId));
     const composer = root.querySelector('.chat-composer textarea');
     const focused = document.activeElement === composer;
     const selection = composer ? [composer.selectionStart, composer.selectionEnd] : null;
@@ -141,7 +153,7 @@ export function createText({ db, getUser, getFriends, avatar, hydrateImages, esc
   }
 
   async function open(id) {
-    if (!getFriends().includes(id) && !inbox.some((row) => row.friend_id === id)) throw new Error('You can only text your friends.');
+    if (!getFriends().includes(id)) throw new Error('You can only text your friends.');
     peerId = id;
     history = [];
     cursor = null;
