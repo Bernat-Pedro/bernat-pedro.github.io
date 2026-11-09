@@ -195,7 +195,11 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .visibility-options label span { min-height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 4px; color: var(--muted); font-size: .78rem; font-weight: 600; }
 .visibility-options input:checked + span { color: var(--green); background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 .visibility-options input:focus-visible + span { outline: 2px solid var(--coral); outline-offset: 2px; }
-.photo-field input[type="file"] { max-width: 100%; color: var(--muted); font-size: .75rem; font-weight: 400; }
+.photo-field-title { display: block; margin-bottom: 7px; font-size: .8rem; font-weight: 700; }
+.photo-picker { min-width: 0; display: flex; align-items: center; gap: 10px; }
+.photo-picker .button { flex: 0 0 auto; }
+.photo-file-name { min-width: 0; overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; font-size: .75rem; font-weight: 400; }
+.photo-input-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .photo-field small { color: var(--muted); font-size: .72rem; font-weight: 400; }
 .photo-preview img { width: 100%; max-height: 150px; display: block; border-radius: 5px; object-fit: cover; }
 .calendar-empty { margin: 14px 0 0; color: var(--muted); font-size: .78rem; text-align: center; }
@@ -258,9 +262,10 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
 .modal::backdrop { background: rgba(15, 25, 20, .48); backdrop-filter: blur(3px); }
 .modal-heading { align-items: flex-start; margin-bottom: 20px; }
 .modal-heading h2 { font-size: 1.32rem; }
-.search-form { display: flex; align-items: center; gap: 9px; }
-.search-form > span { position: absolute; margin-left: 12px; color: var(--muted); font-size: 1.3rem; pointer-events: none; }
-.search-form input { padding-left: 37px !important; }
+.search-form { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 9px; }
+.search-form > span { position: absolute; top: 50%; left: 12px; color: var(--muted); font-size: 1.3rem; transform: translateY(-50%); pointer-events: none; }
+.search-form input { width: auto; min-width: 0; padding-left: 37px !important; }
+.search-form .button { white-space: nowrap; }
 .search-results { max-height: 55vh; overflow: auto; margin-top: 16px; }
 .search-empty { padding: 22px 7px; color: var(--muted); font-size: .85rem; text-align: center; }
 .search-result { min-height: 68px; }
@@ -301,6 +306,12 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   .day-cell { min-height: 94px; padding: 5px 4px; }
 }
 @media (max-width: 900px) {
+  .app-shell { display: block; padding-bottom: 64px; }
+  .sidebar { position: fixed; z-index: 5; top: auto; right: 0; bottom: 0; left: 0; width: 100%; height: 64px; display: block; padding: 0; border-top: 1px solid var(--line); border-right: 0; background: var(--surface); }
+  .sidebar .wordmark, .side-label, .sidebar-bottom { display: none; }
+  .side-nav { height: 64px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .side-nav button { flex-direction: column; justify-content: center; gap: 4px; border-radius: 0; font-size: .67rem; }
+  .nav-dot { width: 7px; height: 7px; }
   .calendar-layout { grid-template-columns: minmax(0, 1fr); }
   .planner-panel { display: block; }
   .stack-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -362,8 +373,7 @@ input::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--mute
   .request-actions .button { padding-inline: 8px; }
   .modal { padding: 18px; }
   .event-photo { width: calc(100% + 36px); margin: -18px -18px 16px; }
-  .search-form { flex-wrap: wrap; }
-  .search-form input { flex: 1; min-width: 160px; }
+  .search-form { grid-template-columns: minmax(0, 1fr) auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }

@@ -318,7 +318,7 @@ function scheduleEventExpiry() {
 }
 
 function renderPlanner() {
-  return `<section class="planner-panel"><div class="panel-heading"><p class="eyebrow">Make it happen</p><h2>Plan something</h2></div><form id="event-form" class="stack-form"><label>Event name<input name="name" required maxlength="100" placeholder="Sunday supper"></label><label>Category<select name="category" required>${categories.map((category) => `<option>${category}</option>`).join('')}</select></label><label>Date<input name="event_date" type="date" required value="${dateKey(state.month.getFullYear(), state.month.getMonth(), Math.min(new Date().getDate(), new Date(state.month.getFullYear(), state.month.getMonth() + 1, 0).getDate()))}"></label><label class="switch-row"><span><strong>All day</strong><small>Skip the clock for this one</small></span><input type="checkbox" name="all_day" checked><span class="switch-ui"></span></label><div class="time-fields" hidden><label>From<input name="start_time" type="time"></label><label>To<input name="end_time" type="time"></label></div><fieldset class="visibility-picker"><legend>Who can see it?</legend><div class="visibility-options"><label><input type="radio" name="visibility" value="private"><span>Only me</span></label><label><input type="radio" name="visibility" value="friends" checked><span>Friends</span></label></div></fieldset><label>Description <span class="optional">Optional</span><textarea name="description" rows="3" maxlength="1000" placeholder="A few details for your guests"></textarea></label><label>Location <span class="optional">Optional</span><input name="location" maxlength="200" placeholder="Where to meet"></label><label class="photo-field">Event photo <span class="optional">Optional</span><input name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span class="photo-preview" id="event-photo-preview" hidden></span><small>Image up to 5 MB</small></label><button class="button primary wide" type="submit">Create event <span aria-hidden="true">↗</span></button></form></section>`;
+  return `<section class="planner-panel"><div class="panel-heading"><p class="eyebrow">Make it happen</p><h2>Plan something</h2></div><form id="event-form" class="stack-form"><label>Event name<input name="name" required maxlength="100" placeholder="Sunday supper"></label><label>Category<select name="category" required>${categories.map((category) => `<option>${category}</option>`).join('')}</select></label><label>Date<input name="event_date" type="date" required value="${dateKey(state.month.getFullYear(), state.month.getMonth(), Math.min(new Date().getDate(), new Date(state.month.getFullYear(), state.month.getMonth() + 1, 0).getDate()))}"></label><label class="switch-row"><span><strong>All day</strong><small>Skip the clock for this one</small></span><input type="checkbox" name="all_day" checked><span class="switch-ui"></span></label><div class="time-fields" hidden><label>From<input name="start_time" type="time"></label><label>To<input name="end_time" type="time"></label></div><fieldset class="visibility-picker"><legend>Who can see it?</legend><div class="visibility-options"><label><input type="radio" name="visibility" value="private"><span>Only me</span></label><label><input type="radio" name="visibility" value="friends" checked><span>Friends</span></label></div></fieldset><label>Description <span class="optional">Optional</span><textarea name="description" rows="3" maxlength="1000" placeholder="A few details for your guests"></textarea></label><label>Location <span class="optional">Optional</span><input name="location" maxlength="200" placeholder="Where to meet"></label><div class="photo-field"><span class="photo-field-title">Event photo <span class="optional">Optional</span></span><div class="photo-picker"><button class="button secondary" type="button" data-action="choose-event-photo">Choose Photo</button><span id="event-photo-name" class="photo-file-name">No photo selected</span></div><input class="photo-input-visually-hidden" id="event-photo-input" name="photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><span class="photo-preview" id="event-photo-preview" hidden></span><small>Image up to 5 MB</small></div><button class="button primary wide" type="submit">Create event <span aria-hidden="true">↗</span></button></form></section>`;
 }
 
 function renderApp() {
@@ -387,16 +387,21 @@ function wireCalendar() {
   const allDay = app.querySelector('[name="all_day"]');
   const timeFields = app.querySelector('.time-fields');
   allDay.addEventListener('change', () => { timeFields.hidden = allDay.checked; timeFields.querySelectorAll('input').forEach((input) => { input.required = !allDay.checked; }); });
-  app.querySelector('[name="photo"]').addEventListener('change', (event) => {
+  const photoInput = app.querySelector('[name="photo"]');
+  app.querySelector('[data-action="choose-event-photo"]').addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     const preview = app.querySelector('#event-photo-preview');
-    if (!file) { preview.hidden = true; preview.replaceChildren(); return; }
+    const fileName = app.querySelector('#event-photo-name');
+    if (!file) { preview.hidden = true; preview.replaceChildren(); fileName.textContent = 'No photo selected'; return; }
     if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type) || file.size > 5 * 1024 * 1024) {
       event.target.value = '';
       preview.hidden = true;
       preview.replaceChildren();
+      fileName.textContent = 'No photo selected';
       return toast('Choose an image under 5 MB.', true);
     }
+    fileName.textContent = file.name;
     const image = document.createElement('img');
     image.src = URL.createObjectURL(file);
     image.alt = 'Event photo preview';
@@ -517,6 +522,7 @@ async function showSearch(query = '') {
   state.query = query;
   modal.innerHTML = `<div class="modal-heading"><div><p class="eyebrow">Find your people</p><h2>Search by username</h2></div><button class="icon-button" type="button" data-close aria-label="Close">×</button></div><form id="search-form" class="search-form"><span aria-hidden="true">⌕</span><input name="query" value="${escapeHtml(query)}" placeholder="Try a username…" minlength="1" maxlength="24" autocomplete="off"><button type="submit" class="button secondary">Search</button></form><div class="search-results" id="search-results"><p class="search-empty">Search Gather members by username.</p></div>`;
   modal.showModal();
+  if (!query) requestAnimationFrame(() => modal.querySelector('[name="query"]')?.focus());
   modal.querySelector('[data-close]').addEventListener('click', () => modal.close());
   modal.querySelector('#search-form').addEventListener('submit', async (event) => {
     event.preventDefault();
