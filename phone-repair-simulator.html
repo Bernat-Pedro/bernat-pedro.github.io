@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Repair Simulator</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="phone-repair-simulator.css?v=paused-jobs-5">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- Workshop View -->
+        <div id="workshopView" class="view active">
+            <div class="top-bar">
+                <div class="stats-display">
+                    <span class="stat-item">💰 <span id="moneyDisplay">$0</span></span>
+                    <span class="stat-item">📊 Level: <span id="levelDisplay">1</span></span>
+                    <span class="stat-item">⭐ Rep: <span id="reputationDisplay">0</span></span>
+                    <span class="stat-item">🔧 Phones: <span id="phonesRepairedDisplay">0</span></span>
+                </div>
+                <button id="saveGameBtn" class="save-btn">💾 Save Game</button>
+            </div>
+            
+            <canvas id="workshopCanvas" width="1200" height="700"></canvas>
+            
+            <div class="interaction-hint" id="interactionHint"></div>
+        </div>
+
+        <!-- Computer Screen Interface -->
+        <div id="computerScreen" class="view">
+            <div class="computer-header">
+                <h1>🖥️ PHONE REPAIR SHOP OS</h1>
+                <button class="close-btn" onclick="closeComputer()">✕ Exit</button>
+            </div>
+
+            <div class="computer-tabs">
+                <button class="tab-btn active" data-tab="jobs">📋 Jobs</button>
+                <button class="tab-btn" data-tab="repairs">🔧 Active Repairs</button>
+                <button class="tab-btn" data-tab="completed">✅ Completed Jobs</button>
+                <button class="tab-btn" data-tab="upgrades">⬆️ Upgrades</button>
+                <button class="tab-btn" data-tab="inventory">📦 Inventory</button>
+                <button class="tab-btn" data-tab="stats">📈 Statistics</button>
+            </div>
+
+            <!-- Jobs Tab -->
+            <div class="tab-content active" id="jobs-tab">
+                <div class="jobs-grid" id="jobsGrid"></div>
+            </div>
+
+            <!-- Active Repairs Tab -->
+            <div class="tab-content" id="repairs-tab">
+                <div class="repairs-list" id="repairsList"></div>
+            </div>
+
+            <!-- Completed Jobs Tab -->
+            <div class="tab-content" id="completed-tab">
+                <div class="completed-list" id="completedList"></div>
+            </div>
+
+            <!-- Upgrades Tab -->
+            <div class="tab-content" id="upgrades-tab">
+                <div class="upgrades-grid" id="upgradesGrid"></div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div class="tab-content" id="inventory-tab">
+                <div class="inventory-grid" id="inventoryGrid"></div>
+            </div>
+
+            <!-- Statistics Tab -->
+            <div class="tab-content" id="stats-tab">
+                <div class="statistics" id="statisticsContent"></div>
+            </div>
+        </div>
+
+        <!-- Repair Table View -->
+        <div id="repairTableView" class="view">
+            <div class="repair-header">
+                <div class="repair-info">
+                    <h2 id="repairPhoneModel">Phone Model</h2>
+                    <p id="repairProblem">Problem</p>
+                </div>
+                <div class="repair-actions">
+                    <button id="diagnosticsBtn" class="action-btn">🔍 Diagnostics</button>
+                    <button id="repairBtn" class="action-btn">🔧 Repair</button>
+                    <button id="testBtn" class="action-btn">✓ Test</button>
+                    <button id="completeBtn" class="action-btn">✅ Complete</button>
+                    <button id="cancelRepairBtn" class="action-btn cancel">Pause &amp; return</button>
+                </div>
+            </div>
+
+            <p id="repairToolHint" class="repair-tool-hint" role="status"></p>
+            <div class="repair-workspace">
+                <canvas id="repairCanvas" width="1000" height="600" aria-label="Interactive repair mat: drag tools onto highlighted targets, then follow the gesture guides. Open Repair for instructions."></canvas>
+                <div class="repair-steps" id="repairSteps"></div>
+            </div>
+
+            <div class="repair-log" id="repairLog"></div>
+        </div>
+
+        <!-- Diagnostics Modal -->
+        <div id="diagnosticsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🔍 Diagnostics</h3>
+                    <span class="close" onclick="closeDiagnostics()">&times;</span>
+                </div>
+                <div class="diagnostics-panel" id="diagnosticsPanel"></div>
+            </div>
+        </div>
+
+        <!-- Repair Instructions Modal -->
+        <div id="repairInstructionsModal" class="modal">
+            <div class="modal-content large">
+                <div class="modal-header">
+                    <h3>🔧 Repair Instructions</h3>
+                    <span class="close" onclick="closeInstructions()">&times;</span>
+                </div>
+                <div class="instructions-content" id="instructionsContent"></div>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="notificationToast" class="toast"></div>
+    </div>
+
+    <script src="phone-repair-simulator.js?v=varied-jobs-1"></script>
+    <script src="phone-repair-interactions.js?v=more-repairs-2"></script>
+    <script src="phone-repair-simulator-enhanced.js?v=more-repairs-2"></script>
+</body>
+</html>
