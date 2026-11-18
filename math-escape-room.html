@@ -4,14 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Facility 07 — Level 01</title>
 <link rel="icon" href="math-favicon.svg" type="image/svg+xml">
-<title>Facility 07 — Escape Room</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root{
   --cyan:#6cf6ff;--blue:#6f8cff;--pink:#ff78ba;
-  --green:#65ffb7;--bg:#070b15;--panel:#101a2b;
+  --green:#65ffb7;--bg:#070b15;
 }
 *{box-sizing:border-box}
 body{
@@ -73,8 +74,7 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .code-bit.hidden{color:#64758b}
 .frame{border:1px solid #2c455c;border-radius:18px;overflow:hidden;box-shadow:0 25px 80px #0007}
 .room{
-  position:relative;isolation:isolate;overflow:hidden;
-  min-height:610px;
+  position:relative;isolation:isolate;overflow:hidden;min-height:610px;
   background:
     radial-gradient(ellipse at 35% 42%,#24445a 0%,transparent 50%),
     linear-gradient(180deg,#142438,#0b1422 78%);
@@ -88,8 +88,7 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 }
 .room:after{
   content:"";position:absolute;bottom:0;left:0;right:0;height:135px;z-index:-1;
-  background:
-    linear-gradient(180deg,#172b40,#0a111d);
+  background:linear-gradient(180deg,#172b40,#0a111d);
   border-top:2px solid #6cf6ff55;
 }
 .ceiling{
@@ -109,13 +108,12 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
   border:1px solid #4c7089;border-radius:7px;background:#0b1724;
   padding:13px;font:9px Orbitron;color:#83a9c3;
 }
-.wall-panel .signal{height:4px;background:var(--cyan);width:70%;margin-top:17px;box-shadow:0 0 10px var(--cyan)}
-.wall-panel .signal:nth-child(3){width:43%;margin-top:10px;background:var(--pink);box-shadow:0 0 10px var(--pink)}
+.signal{height:4px;background:var(--cyan);width:70%;margin-top:17px;box-shadow:0 0 10px var(--cyan)}
+.signal:nth-child(3){width:43%;margin-top:10px;background:var(--pink);box-shadow:0 0 10px var(--pink)}
 .window{
   position:absolute;top:95px;left:23%;width:29%;height:105px;
   border:1px solid #4a7188;border-radius:6px;
   background:linear-gradient(130deg,#19394c,#0c1725);
-  box-shadow:inset 0 0 35px #6cf6ff0b;
 }
 .window:after{
   content:"";position:absolute;inset:0;
@@ -131,7 +129,6 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .bars i:nth-child(1){height:35%}.bars i:nth-child(2){height:75%}
 .bars i:nth-child(3){height:50%}.bars i:nth-child(4){height:100%}.bars i:nth-child(5){height:65%}
 
-/* Large, independent exit bay */
 .exit-bay{
   position:absolute;z-index:3;right:3%;top:75px;bottom:80px;
   width:22%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
@@ -153,10 +150,7 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
   background:linear-gradient(90deg,transparent,var(--pink),transparent);
   box-shadow:0 0 13px var(--pink);
 }
-.door-symbol{
-  font-size:clamp(38px,5vw,62px);color:#9bb9d0;
-  text-shadow:0 0 25px #6cf6ff20;z-index:1;
-}
+.door-symbol{font-size:clamp(38px,5vw,62px);color:#9bb9d0;z-index:1}
 .door-name{font:800 clamp(12px,1.6vw,17px) Orbitron;letter-spacing:3px;z-index:1}
 .door-state{font-size:9px;letter-spacing:1.5px;color:#ff8da8;z-index:1;text-align:center}
 .door-handle{
@@ -174,11 +168,10 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .exit-floor.open{background:var(--green);box-shadow:0 0 20px var(--green)}
 .door-help{font-size:10px;color:#8298af;text-align:center;margin-top:9px;line-height:1.6}
 
-/* Six interactive objects */
 .objects{
   position:absolute;z-index:4;left:4%;right:28%;top:235px;bottom:42px;
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));
-  gap:13px;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));gap:13px;
 }
 .object{
   min-width:0;position:relative;border:1px solid #3a566f;border-radius:14px;
@@ -191,20 +184,17 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
   transform:translateY(-5px) scale(1.025);border-color:var(--cyan);
   box-shadow:0 0 25px #6cf6ff22,0 10px 25px #0004;
 }
-.object:active:not(:disabled){transform:scale(.98)}
 .object:disabled{cursor:default}
 .object .emoji{font-size:clamp(31px,4vw,48px);filter:drop-shadow(0 0 12px #6cf6ff24)}
 .object-name{font:700 10px Orbitron;letter-spacing:1.5px}
 .object-state{font-size:9px;color:#8da4ba;letter-spacing:1px}
-.object .indicator{position:absolute;top:12px;right:12px;width:7px;height:7px;border-radius:50%;background:#687e93}
+.indicator{position:absolute;top:12px;right:12px;width:7px;height:7px;border-radius:50%;background:#687e93}
 .object.solved{border-color:var(--green);background:linear-gradient(150deg,#143b3b,#0b1924);box-shadow:inset 0 0 25px #65ffb710}
 .object.solved .indicator{background:var(--green);box-shadow:0 0 12px var(--green)}
 .object.solved .object-state{color:var(--green)}
-.object.solved .emoji{filter:drop-shadow(0 0 12px #65ffb755)}
 .room-footer{
   position:absolute;bottom:13px;left:20px;right:20px;z-index:4;
-  display:flex;justify-content:space-between;gap:10px;
-  font-size:10px;color:#8298b1;
+  display:flex;justify-content:space-between;gap:10px;font-size:10px;color:#8298b1;
 }
 .room-footer strong{color:var(--cyan)}
 .bottom{
@@ -214,6 +204,7 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .bottom strong{color:#e7f2ff;font-size:12px}
 .bottom p{margin:5px 0 0;color:#8da1b8;font-size:11px;line-height:1.6}
 .fragment-count{font:11px Orbitron;color:var(--cyan);white-space:nowrap}
+
 .overlay{
   position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;
   padding:18px;background:#03060be5;backdrop-filter:blur(14px);
@@ -221,12 +212,11 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .overlay.show{display:flex;animation:fade .18s}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 .modal{
-  width:min(450px,100%);padding:27px;border:1px solid #41657a;border-radius:20px;
+  width:min(450px,100%);max-height:90vh;overflow-y:auto;
+  padding:27px;border:1px solid #41657a;border-radius:20px;
   background:linear-gradient(145deg,#172940,#0a111e);
   box-shadow:0 25px 100px #000a,0 0 45px #6cf6ff0c;
-  animation:rise .22s ease-out;
 }
-@keyframes rise{from{transform:translateY(10px) scale(.98)}to{transform:translateY(0) scale(1)}}
 .modal-top{display:flex;justify-content:space-between;align-items:center}
 .modal-kicker{font:10px Orbitron;letter-spacing:2px;color:var(--cyan)}
 .close{width:35px;height:35px;border:1px solid #34495d;border-radius:9px;background:#152235;color:#b8c8dc;font-size:21px}
@@ -234,8 +224,8 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .desc{color:#9aacc2;font-size:12px;line-height:1.7}
 .equation{
   margin:21px 0;padding:27px 7px;border:1px solid #31526a;border-radius:12px;
-  background:#07121e;text-align:center;font:700 clamp(25px,6vw,35px) Orbitron;
-  box-shadow:inset 0 0 35px #6cf6ff09;
+  background:#07121e;text-align:center;font:700 clamp(20px,5vw,32px) Orbitron;
+  overflow-wrap:anywhere;
 }
 .answer{
   width:100%;padding:14px;border:1px solid #3b5268;border-radius:10px;
@@ -245,9 +235,9 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .primary{
   width:100%;margin-top:11px;padding:14px;border:0;border-radius:10px;
   background:linear-gradient(100deg,#55e6ef,#7894ff);color:#07111b;font-weight:800;
-  letter-spacing:1px;transition:filter .2s,transform .2s;
+  letter-spacing:1px;
 }
-.primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.primary:hover{filter:brightness(1.1)}
 .feedback{min-height:24px;margin-top:12px;font-size:12px;text-align:center;color:#ff91a5;line-height:1.6}
 .reward{
   display:none;text-align:center;margin:12px 0 0;padding:13px;
@@ -270,9 +260,12 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 .victory .desc{font-size:14px}
 .reward-stats{display:flex;justify-content:center;gap:12px;margin:19px 0;flex-wrap:wrap}
 .reward-pill{padding:9px 12px;border:1px solid #35576a;border-radius:9px;color:var(--cyan);font-size:11px}
+
 @media(max-width:760px){
-  header{padding:13px 15px}.brand-name{font-size:12px}.brand-sub{font-size:8px}.live{font-size:8px}
-  main{padding:20px 11px 30px}.heading{align-items:flex-start;flex-direction:column}
+  header{padding:13px 15px}
+  .brand-name{font-size:12px}.brand-sub{font-size:8px}.live{font-size:8px}
+  main{padding:20px 11px 30px}
+  .heading{align-items:flex-start;flex-direction:column}
   #newGame{width:100%}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
   .stat{padding:12px}
@@ -285,11 +278,18 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
   .door{min-height:300px}
   .door-name{font-size:11px;letter-spacing:2px}
   .door-state{font-size:8px}
-  .objects{left:4%;right:37%;top:270px;bottom:70px;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:9px}
-  .object .emoji{font-size:31px}.object-name{font-size:9px}.object-state{font-size:8px}
-  .room-top{left:12px;right:12px}.room-tag{font-size:8px}.room-tip{font-size:8px}
+  .objects{
+    left:4%;right:37%;top:270px;bottom:70px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:repeat(3,minmax(0,1fr));gap:9px;
+  }
+  .object .emoji{font-size:31px}
+  .object-name{font-size:9px}.object-state{font-size:8px}
+  .room-top{left:12px;right:12px}
+  .room-tag{font-size:8px}.room-tip{font-size:8px}
   .room-footer{left:12px;right:12px;font-size:9px}
-  .bottom{padding:13px;align-items:flex-start}.fragment-count{font-size:9px}
+  .bottom{padding:13px;align-items:flex-start}
+  .fragment-count{font-size:9px}
   .modal{padding:22px}.slot{width:36px;height:47px}
 }
 @media(max-width:400px){
@@ -301,15 +301,74 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* FINAL FACTORY CINEMATIC */
+#finalCutscene{
+  position:fixed;inset:0;z-index:60;display:none;overflow:hidden;
+  align-items:center;justify-content:center;background:#03050b;color:#fff;
+}
+#finalCutscene.show{display:flex}
+#finalCutscene .scene-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 75%,#4a1a0c 0%,#160e13 42%,#03050b 82%);
+}
+#finalCutscene .scene-title{
+  position:absolute;top:9%;left:15px;right:15px;text-align:center;z-index:5;
+  font:700 clamp(12px,2vw,17px) Orbitron;letter-spacing:clamp(2px,1vw,6px);
+  color:#ffcf9b;text-shadow:0 0 18px #ff5a18;
+}
+#finalCutscene .factory{
+  position:absolute;bottom:13%;left:50%;transform:translateX(-50%);
+  width:min(680px,88vw);height:min(330px,48vh);z-index:2;
+  filter:drop-shadow(0 0 20px #ff4b1680);
+}
+.factory .building{position:absolute;bottom:0;background:linear-gradient(90deg,#111a28,#344354 48%,#101722);border:2px solid #607184}
+.factory .main-building{left:22%;width:57%;height:63%}
+.factory .wing{left:0;width:29%;height:42%}
+.factory .right-wing{left:70%;width:30%;height:49%}
+.factory .roof{position:absolute;left:35%;bottom:63%;width:30%;height:18%;background:#26394a;clip-path:polygon(0 100%,18% 0,82% 0,100% 100%)}
+.factory .chimney{position:absolute;bottom:63%;left:62%;width:8%;height:52%;background:linear-gradient(90deg,#26394a,#667486,#26394a);border:2px solid #718195}
+.factory .chimney:after{content:"";position:absolute;top:-8px;left:-5px;right:-5px;height:10px;background:#a1aab4}
+.factory .window-grid{position:absolute;inset:15% 8%;background:repeating-linear-gradient(90deg,transparent 0 35px,#ffb45a 36px 42px,transparent 43px 68px),repeating-linear-gradient(0deg,transparent 0 30px,#ffb45a 31px 35px,transparent 36px 60px);opacity:.55}
+.factory .smoke{position:absolute;bottom:100%;left:60%;width:100px;height:140px;border-radius:50%;background:radial-gradient(ellipse,#4d5360aa,#272d3990 55%,transparent 72%);filter:blur(13px);opacity:.65;animation:smokeRise 3s ease-out infinite}
+@keyframes smokeRise{0%{transform:translate(0,25px) scale(.55);opacity:.15}100%{transform:translate(35px,-100px) scale(1.6);opacity:0}}
+#finalCutscene .blast{
+  position:absolute;left:50%;top:54%;width:20px;height:20px;border-radius:50%;
+  transform:translate(-50%,-50%) scale(0);z-index:3;
+  background:radial-gradient(circle,#fff 0 5%,#fff4a6 12%,#ff9a25 30%,#f04412 53%,#7e160c 70%,transparent 72%);
+  box-shadow:0 0 60px 30px #ff6b19aa;
+}
+#finalCutscene.explode .blast{animation:blastPop 1.25s ease-out forwards}
+@keyframes blastPop{0%{transform:translate(-50%,-50%) scale(0);opacity:1}35%{transform:translate(-50%,-50%) scale(18);opacity:1}100%{transform:translate(-50%,-50%) scale(35);opacity:0}}
+#finalCutscene.explode .factory{animation:factoryShake .8s linear 2 forwards;filter:brightness(2) drop-shadow(0 0 35px #ff6b19)}
+@keyframes factoryShake{0%,100%{transform:translateX(-50%) rotate(0)}20%{transform:translateX(calc(-50% - 9px)) rotate(-1deg)}40%{transform:translateX(calc(-50% + 11px)) rotate(1deg)}60%{transform:translateX(calc(-50% - 7px)) rotate(-.5deg)}80%{transform:translateX(calc(-50% + 7px)) rotate(.5deg)}}
+#finalCutscene .countdown{
+  position:absolute;z-index:6;top:27%;left:0;right:0;text-align:center;
+  font:800 clamp(65px,15vw,130px) Orbitron;color:white;
+  text-shadow:0 0 30px #ff6a24;animation:countPulse .8s ease-in-out;
+}
+@keyframes countPulse{0%{opacity:0;transform:scale(1.7)}25%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.8)}}
+#finalCutscene .flash{position:absolute;inset:0;background:white;opacity:0;z-index:4;pointer-events:none}
+#finalCutscene.explode .flash{animation:flashBang .65s ease-out}
+@keyframes flashBang{0%{opacity:0}12%{opacity:.95}100%{opacity:0}}
+#finalCutscene .scene-caption{
+  position:absolute;bottom:5%;left:10px;right:10px;text-align:center;z-index:7;
+  color:#ffb27c;font:700 10px Orbitron;letter-spacing:3px;
+}
+@media(prefers-reduced-motion:reduce){
+  #finalCutscene *,#finalCutscene *:before{animation-duration:.01ms!important}
+}
+
 </style>
 </head>
+
 <body>
 <header>
   <div class="brand">
     <div class="logo">⌘</div>
     <div>
-      <div class="brand-name">ESCAPE<span style="color:var(--cyan)">-</span>ROOM</div>
-      <div class="brand-sub">FACILITY 07 · LEVEL 01</div>
+      <div class="brand-name">FACILITY <span style="color:var(--cyan)">07</span></div>
+      <div class="brand-sub" id="levelLabel">FACILITY 07 · LEVEL 01 / 12</div>
     </div>
   </div>
   <div class="live">SYSTEM ONLINE</div>
@@ -318,11 +377,11 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 <main>
   <div class="heading">
     <div>
-      <div class="kicker">MISSION 001 / CONTAINMENT BREACH</div>
-      <h1>Escape Facility 07.</h1>
+      <div class="kicker" id="missionKicker">MISSION 001 / CONTAINMENT BREACH</div>
+      <h1 id="mainHeading">Facility 07 — Level 01</h1>
       <div class="subtitle">Six challenges. Six secret digits. One giant locked door. Can you beat the lab?</div>
     </div>
-    <button class="secondary" id="newGame">↻ &nbsp; RESTART MISSION</button>
+    <button class="secondary" id="newGame">↻ &nbsp; RESTART FROM LEVEL 1</button>
   </div>
 
   <div class="stats">
@@ -336,8 +395,8 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
       <div class="stat-value" id="accessStatus" style="color:#ff8199;font-size:15px">LOCKED</div>
     </div>
     <div class="stat">
-      <div class="stat-label">ROOM ID</div>
-      <div class="stat-value">07<span style="color:var(--cyan)">-A</span></div>
+      <div class="stat-label">CURRENT LEVEL</div>
+      <div class="stat-value" id="levelNumber">01 <small>/ 12</small></div>
     </div>
     <div class="stat">
       <div class="stat-label">YOUR SECRET CODE</div>
@@ -349,8 +408,8 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
     <div class="room">
       <div class="ceiling"></div>
       <div class="room-top">
-        <div class="room-tag">ZONE <strong>07</strong> / LAB FLOOR</div>
-        <div class="room-tip">Explore objects to find the code</div>
+        <div class="room-tag" id="roomTag">ZONE <strong>07</strong> / LEVEL 01</div>
+        <div class="room-tip" id="roomTip">Explore objects to find the code</div>
       </div>
 
       <div class="wall-panel">
@@ -381,6 +440,7 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
         <span id="bottomCount">0 / 6 FRAGMENTS</span>
       </div>
     </div>
+
     <div class="bottom">
       <div>
         <strong>YOUR MISSION</strong>
@@ -401,8 +461,8 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
     <div class="desc" id="puzzleDesc">Solve the maths puzzle to collect a secret digit.</div>
     <div class="equation" id="equation">8 × 7</div>
     <form id="answerForm">
-      <input class="answer" id="answerInput" inputmode="numeric" autocomplete="off" placeholder="Type your answer" aria-label="Your answer">
-      <button class="primary" type="submit">LOCK IN ANSWER ↗</button>
+      <input class="answer" id="answerInput" inputmode="decimal" autocomplete="off" placeholder="Type your answer" aria-label="Your answer">
+      <button class="primary" id="submitAnswerButton" type="button">LOCK IN ANSWER ↗</button>
     </form>
     <div class="feedback" id="answerFeedback" aria-live="polite"></div>
     <div class="reward" id="answerReward"></div>
@@ -426,15 +486,32 @@ button.secondary:hover{border-color:var(--cyan);color:var(--cyan)}
 <div class="overlay" id="winOverlay">
   <div class="modal victory">
     <div class="trophy">✦</div>
-    <div class="modal-kicker">MISSION COMPLETE</div>
-    <h2>YOU ESCAPED!</h2>
-    <div class="desc">You beat Facility 07's security system. You're officially an Escape Engineer.</div>
+    <div class="modal-kicker" id="winKicker">LEVEL COMPLETE</div>
+    <h2 id="winTitle">YOU ESCAPED!</h2>
+    <div class="desc" id="winDescription">You beat Facility 07's security system!</div>
     <div class="reward-stats">
       <div class="reward-pill" id="winChallenges">6/6 CHALLENGES</div>
       <div class="reward-pill">CODE CRACKED ✓</div>
     </div>
-    <button class="primary" id="playAgain">PLAY ANOTHER MISSION ↗</button>
+    <button class="primary" id="playAgain">NEXT LEVEL ↗</button>
   </div>
+</div>
+
+
+<div id="finalCutscene" aria-hidden="true">
+  <div class="scene-bg"></div>
+  <div class="scene-title">FACILITY 07 // SELF-DESTRUCT SEQUENCE</div>
+  <div class="countdown" id="cutsceneCountdown">3</div>
+  <div class="factory" aria-label="A factory building">
+    <div class="smoke"></div>
+    <div class="building wing"></div>
+    <div class="building main-building"><div class="window-grid"></div></div>
+    <div class="building right-wing"></div>
+    <div class="roof"></div>
+    <div class="chimney"></div>
+  </div>
+  <div class="blast"></div><div class="flash"></div>
+  <div class="scene-caption" id="cutsceneCaption">CONTAINMENT FAILURE DETECTED</div>
 </div>
 
 <script>
@@ -452,6 +529,7 @@ let current=-1;
 let enteredCode="";
 let solvedOrder=0;
 let won=false;
+let currentLevel=1;
 let audioContext=null;
 
 const $=id=>document.getElementById(id);
@@ -460,41 +538,189 @@ function rand(min,max){
   return Math.floor(Math.random()*(max-min+1))+min;
 }
 
-function makePuzzle(){
-  const type=rand(0,3);
-  let a,b,answer,expression,digit;
+function makePuzzle(level){
+  let a,b,c,d,answer,expression;
+  const type=rand(0,2);
 
-  if(type===0){
-    a=rand(2,10);b=rand(2,10);
-    answer=a*b;
-    expression=`${a} × ${b}`;
-    digit=answer%10;
-  }else if(type===1){
-    b=rand(2,9);
-    answer=rand(1,9);
-    a=b*answer;
-    expression=`${a} ÷ ${b}`;
-    digit=answer;
-  }else if(type===2){
-    a=rand(100,899);b=rand(100,999);
-    if(Math.random()<.5){
-      answer=a+b;
-      expression=`${a} + ${b}`;
-    }else{
-      if(b>a)[a,b]=[b,a];
-      answer=a-b;
-      expression=`${a} − ${b}`;
-    }
-    digit=answer%10;
-  }else{
-    const den=rand(2,9);
-    const numerator=rand(1,den-1);
-    const whole=den*rand(1,Math.floor(9/numerator));
-    answer=numerator*(whole/den);
-    expression=`${numerator}/${den} of ${whole}`;
-    digit=answer;
+  switch(level){
+
+    case 1:
+      if(type===0){
+        a=rand(2,10);b=rand(2,10);
+        answer=a*b;expression=`${a} × ${b}`;
+      }else if(type===1){
+        b=rand(2,9);answer=rand(1,9);a=b*answer;
+        expression=`${a} ÷ ${b}`;
+      }else{
+        a=rand(100,899);b=rand(100,999);
+        if(Math.random()<.5){
+          answer=a+b;expression=`${a} + ${b}`;
+        }else{
+          if(b>a)[a,b]=[b,a];
+          answer=a-b;expression=`${a} − ${b}`;
+        }
+      }
+      break;
+
+    case 2:
+      if(type===0){
+        a=rand(12,35);b=rand(11,29);
+        answer=a*b;expression=`${a} × ${b}`;
+      }else if(type===1){
+        b=rand(5,15);answer=rand(10,30);a=b*answer;
+        expression=`${a} ÷ ${b}`;
+      }else{
+        a=rand(250,999);b=rand(250,999);
+        answer=a+b;expression=`${a} + ${b}`;
+      }
+      break;
+
+    case 3:
+      a=rand(10,999)/10;
+      b=rand(10,999)/10;
+      if(type===0){
+        answer=Number((a+b).toFixed(1));
+        expression=`${a.toFixed(1)} + ${b.toFixed(1)}`;
+      }else if(type===1){
+        if(b>a)[a,b]=[b,a];
+        answer=Number((a-b).toFixed(1));
+        expression=`${a.toFixed(1)} − ${b.toFixed(1)}`;
+      }else{
+        a=rand(2,9)*10;b=rand(2,9);
+        answer=a*b;expression=`${a} × ${b}`;
+      }
+      break;
+
+    case 4:
+      if(type===0){
+        a=rand(1,5);b=rand(2,8);
+        c=rand(1,5);d=rand(2,8);
+        answer=Number((a/b+c/d).toFixed(3));
+        expression=`${a}/${b} + ${c}/${d} (decimal answer)`;
+      }else if(type===1){
+        a=rand(2,8);b=rand(2,8);
+        answer=a;expression=`${a}/${b} × ${b}`;
+      }else{
+        a=rand(2,9);b=rand(2,9);
+        answer=Number((a/b).toFixed(3));
+        expression=`${a} ÷ ${b} (3 decimal places)`;
+      }
+      break;
+
+    case 5:
+      a=rand(3,15);b=rand(3,15);c=rand(2,12);
+      if(type===0){
+        answer=a+b*c;expression=`${a} + ${b} × ${c}`;
+      }else if(type===1){
+        answer=(a+b)*c;expression=`(${a} + ${b}) × ${c}`;
+      }else{
+        answer=a*c-b;expression=`${a} × ${c} − ${b}`;
+      }
+      break;
+
+    case 6:
+      a=rand(2,9)*100;
+      b=rand(5,90);
+      if(type===0){
+        answer=a*b/100;
+        expression=`${b}% of ${a}`;
+      }else if(type===1){
+        answer=a*(100+b)/100;
+        expression=`${a} increased by ${b}%`;
+      }else{
+        answer=a*(100-b)/100;
+        expression=`${a} decreased by ${b}%`;
+      }
+      break;
+
+    case 7:
+      a=rand(2,12);b=rand(2,12);
+      c=rand(2,12);d=rand(2,12);
+      if(type===0){
+        answer=Number((a/b+c/d).toFixed(3));
+        expression=`${a}/${b} + ${c}/${d} (decimal answer)`;
+      }else if(type===1){
+        answer=Number((a/b*c/d).toFixed(3));
+        expression=`${a}/${b} × ${c}/${d} (decimal answer)`;
+      }else{
+        answer=Number((a/b-c/d).toFixed(3));
+        expression=`${a}/${b} − ${c}/${d} (decimal answer)`;
+      }
+      break;
+
+    case 8:
+      a=rand(3,15);b=rand(2,5);c=rand(2,10);
+      if(type===0){
+        answer=a**2+b**2;
+        expression=`${a}² + ${b}²`;
+      }else if(type===1){
+        answer=Math.sqrt(a*a)*b+c;
+        expression=`√${a*a} × ${b} + ${c}`;
+      }else{
+        answer=a**3-b**2;
+        expression=`${a}³ − ${b}²`;
+      }
+      break;
+
+    case 9:
+      a=rand(2,12);b=rand(2,30);c=rand(2,20);
+      if(type===0){
+        answer=b;
+        expression=`${a}x + ${c} = ${a*b+c}. Find x.`;
+      }else if(type===1){
+        answer=b;
+        expression=`${a}x − ${c} = ${a*b-c}. Find x.`;
+      }else{
+        answer=b;
+        expression=`${a}x ÷ ${a} + ${c} = ${b+c}. Find x.`;
+      }
+      break;
+
+    case 10:
+      a=rand(-20,20);b=rand(-20,20);c=rand(2,12);
+      if(type===0){
+        answer=a*b-c;
+        expression=`(${a}) × (${b}) − ${c}`;
+      }else if(type===1){
+        answer=(a-b)*c;
+        expression=`(${a} − ${b}) × ${c}`;
+      }else{
+        answer=a+b*c;
+        expression=`${a} + (${b} × ${c})`;
+      }
+      break;
+
+    case 11:
+      a=rand(10,40);b=rand(2,9);c=rand(10,30);
+      if(type===0){
+        answer=(a*b+c)*2;
+        expression=`[(${a} × ${b}) + ${c}] × 2`;
+      }else if(type===1){
+        answer=Number((a/b*100+c).toFixed(2));
+        expression=`${a} ÷ ${b} × 100 + ${c} (2 decimals)`;
+      }else{
+        answer=(a+b)**2-c;
+        expression=`(${a} + ${b})² − ${c}`;
+      }
+      break;
+
+    case 12:
+      a=rand(12,30);b=rand(5,15);
+      c=rand(3,12);d=rand(2,9);
+      if(type===0){
+        answer=(a+b)**2-c*d+Math.sqrt(d*d);
+        expression=`(${a} + ${b})² − (${c} × ${d}) + √${d*d}`;
+      }else if(type===1){
+        answer=Number(((a**2+b**2)/d+c).toFixed(2));
+        expression=`(${a}² + ${b}²) ÷ ${d} + ${c} (2 decimals)`;
+      }else{
+        answer=Number((((a*b+c)**2-d**2)/b).toFixed(2));
+        expression=`[(${a} × ${b} + ${c})² − ${d}²] ÷ ${b} (2 decimals)`;
+      }
+      break;
   }
 
+  const digit=String(Math.abs(answer)).replace(/\.$/,"").slice(-1);
   return {expression,answer,digit,solved:false};
 }
 
@@ -506,6 +732,7 @@ function playSound(type){
     const notes=type==="win"?[523,659,784,1046]:
       type==="correct"?[523,784]:
       type==="wrong"?[180,130]:[380,520];
+
     notes.forEach((freq,i)=>{
       const osc=audioContext.createOscillator();
       const gain=audioContext.createGain();
@@ -514,10 +741,100 @@ function playSound(type){
       gain.gain.setValueAtTime(.0001,now+i*.11);
       gain.gain.exponentialRampToValueAtTime(.12,now+i*.11+.02);
       gain.gain.exponentialRampToValueAtTime(.0001,now+i*.11+.16);
-      osc.connect(gain);gain.connect(audioContext.destination);
-      osc.start(now+i*.11);osc.stop(now+i*.11+.18);
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      osc.start(now+i*.11);
+      osc.stop(now+i*.11+.18);
     });
   }catch(e){}
+}
+
+
+let cutsceneTimers=[];
+function clearCutsceneTimers(){
+  cutsceneTimers.forEach(clearTimeout);
+  cutsceneTimers=[];
+}
+function playExplosionSound(){
+  try{
+    audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+    if(audioContext.state==="suspended")audioContext.resume();
+    const ctx=audioContext,now=ctx.currentTime;
+    // Deep cinematic boom: filtered noise burst plus descending low oscillator.
+    const length=Math.floor(ctx.sampleRate*1.8);
+    const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+    const data=buffer.getChannelData(0);
+    for(let i=0;i<length;i++){
+      const fade=Math.pow(1-i/length,2);
+      data[i]=(Math.random()*2-1)*fade;
+    }
+    const noise=ctx.createBufferSource();noise.buffer=buffer;
+    const filter=ctx.createBiquadFilter();filter.type="lowpass";
+    filter.frequency.setValueAtTime(900,now);
+    filter.frequency.exponentialRampToValueAtTime(90,now+1.4);
+    const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,now);
+    gain.gain.exponentialRampToValueAtTime(.9,now+.035);
+    gain.gain.exponentialRampToValueAtTime(.0001,now+1.8);
+    noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);
+    noise.start(now);noise.stop(now+1.8);
+    const osc=ctx.createOscillator(),og=ctx.createGain();
+    osc.type="sine";osc.frequency.setValueAtTime(95,now);
+    osc.frequency.exponentialRampToValueAtTime(28,now+1.5);
+    og.gain.setValueAtTime(.0001,now);
+    og.gain.exponentialRampToValueAtTime(.65,now+.04);
+    og.gain.exponentialRampToValueAtTime(.0001,now+1.6);
+    osc.connect(og);og.connect(ctx.destination);osc.start(now);osc.stop(now+1.7);
+  }catch(e){}
+}
+function showVictoryScreen(){
+  $("winOverlay").classList.add("show");
+  $("winChallenges").textContent=`6/6 CHALLENGES · LEVEL ${currentLevel}`;
+  $("exitDoor").classList.add("open");
+  $("doorStatus").textContent="GATE OPEN";
+  $("doorHelp").innerHTML="MISSION COMPLETE!<br>YOU ESCAPED!";
+  $("missionStatus").textContent="ESCAPED!";
+  won=true;
+  if(currentLevel===12){
+    $("winKicker").textContent="ULTIMATE MISSION COMPLETE";
+    $("winTitle").textContent="FACILITY 07 CONQUERED!";
+    $("winDescription").textContent=
+      "You survived all 12 levels. You are officially a legendary Escape Engineer!";
+    $("playAgain").textContent="RESTART FROM LEVEL 1 ↻";
+  }else{
+    $("winKicker").textContent="LEVEL COMPLETE";
+    $("winTitle").textContent="YOU ESCAPED!";
+    $("winDescription").textContent=
+      `You escaped Level ${currentLevel}! Level ${currentLevel+1} is now unlocked. Think you can beat it?`;
+    $("playAgain").textContent="Play next Level";
+  }
+  playSound("win");
+}
+function runFinalCutscene(){
+  clearCutsceneTimers();
+  const scene=$("finalCutscene");
+  const counter=$("cutsceneCountdown");
+  scene.classList.remove("explode");
+  scene.classList.add("show");
+  scene.setAttribute("aria-hidden","false");
+  $("cutsceneCaption").textContent="CONTAINMENT FAILURE DETECTED";
+  const steps=["3","2","1"];
+  steps.forEach((n,i)=>{
+    cutsceneTimers.push(setTimeout(()=>{
+      counter.textContent=n;
+      counter.style.animation="none";void counter.offsetWidth;
+      counter.style.animation="";
+    },i*850));
+  });
+  cutsceneTimers.push(setTimeout(()=>{
+    counter.textContent="";scene.classList.add("explode");
+    $("cutsceneCaption").textContent="FACILITY 07 — CRITICAL FAILURE";
+    playExplosionSound();
+  },2550));
+  cutsceneTimers.push(setTimeout(()=>{
+    scene.classList.remove("show","explode");
+    scene.setAttribute("aria-hidden","true");
+    showVictoryScreen();
+  },5700));
 }
 
 function renderObjects(){
@@ -548,8 +865,24 @@ function renderCurrentCode(){
   });
 }
 
+function updateLevelDisplay(){
+  const level=String(currentLevel).padStart(2,"0");
+
+  // Updates the browser tab name too!
+  document.title=`Facility 07 — Level ${level}`;
+
+  $("levelLabel").textContent=`FACILITY 07 · LEVEL ${level} / 12`;
+  $("levelNumber").innerHTML=`${level} <small>/ 12</small>`;
+  $("missionKicker").textContent=
+    `MISSION ${String(currentLevel).padStart(3,"0")} / CONTAINMENT BREACH`;
+  $("roomTag").innerHTML=`ZONE <strong>07</strong> / LEVEL ${level}`;
+  $("roomTip").textContent=`LEVEL ${currentLevel} OF 12 · ESCAPE THE LAB`;
+  $("mainHeading").textContent=`Facility 07 — Level ${level}`;
+}
+
 function updateProgress(){
   const count=puzzles.filter(p=>p.solved).length;
+
   $("solvedCount").textContent=count;
   $("bottomCount").textContent=`${count} / 6 FRAGMENTS`;
   $("fragmentCount").textContent=`FRAGMENTS: ${count}/6`;
@@ -557,29 +890,36 @@ function updateProgress(){
   renderCurrentCode();
 
   const allSolved=count===6;
+
   $("accessStatus").textContent=allSolved?"UNLOCKED":"LOCKED";
   $("accessStatus").style.color=allSolved?"#65ffb7":"#ff8199";
-  $("doorStatus").textContent=allSolved?"GATE ACTIVATED":"6 DIGITS REQUIRED";
-  $("doorHelp").innerHTML=allSolved?"All fragments collected!<br>Enter your code at the gate.":"Solve all six puzzles<br>to activate the gate.";
+  $("doorStatus").textContent=allSolved?"READY — CLICK TO OPEN":"6 DIGITS REQUIRED";
+  $("doorHelp").innerHTML=allSolved?
+    "All fragments collected!<br>Click the door to enter your code.":
+    "Solve all six puzzles<br>to activate the gate.";
+
   $("exitDoor").classList.toggle("open",allSolved);
   $("exitFloor").classList.toggle("open",allSolved);
-  $("missionStatus").textContent=allSolved?"GATE ACTIVATED":"IN PROGRESS";
+  $("missionStatus").textContent=allSolved?"GATE READY":"IN PROGRESS";
 
   puzzles.forEach((p,i)=>{
     const button=$("object-"+i);
     if(!button)return;
     button.classList.toggle("solved",p.solved);
     button.disabled=p.solved;
-    button.querySelector(".object-state").textContent=p.solved?"✓ DIGIT FOUND":"TAP TO EXPLORE";
+    button.querySelector(".object-state").textContent=
+      p.solved?"✓ DIGIT FOUND":"TAP TO EXPLORE";
   });
 }
 
 function openPuzzle(i){
   if(puzzles[i].solved)return;
   current=i;
+
   $("puzzleNumber").textContent=String(i+1).padStart(2,"0");
   $("puzzleTitle").textContent=objectData[i].name+" Challenge";
-  $("puzzleDesc").textContent=objectData[i].desc+" Solve the equation to reveal one digit.";
+  $("puzzleDesc").textContent=
+    `Level ${currentLevel}: ${objectData[i].desc} Solve the problem to reveal one digit.`;
   $("equation").textContent=puzzles[i].expression;
   $("answerInput").value="";
   $("answerFeedback").textContent="";
@@ -591,38 +931,50 @@ function openPuzzle(i){
   setTimeout(()=>$("answerInput").focus(),80);
 }
 
-$("answerForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  if(current<0||puzzles[current].solved)return;
-  const value=$("answerInput").value.trim();
+function submitAnswer(e){
+  if(e) e.preventDefault();
+  if(current<0 || !puzzles[current] || puzzles[current].solved) return;
 
-  if(value===""||!Number.isFinite(Number(value))){
+  const input=$("answerInput");
+  const value=input.value.trim().replace(",", ".");
+  if(value==="" || !Number.isFinite(Number(value))){
+    $("answerFeedback").style.color="#ff91a5";
     $("answerFeedback").textContent="Enter your answer first!";
     playSound("wrong");
+    input.focus();
     return;
   }
 
-  if(Number(value)===puzzles[current].answer){
+  if(Math.abs(Number(value)-puzzles[current].answer)<0.011){
     puzzles[current].solved=true;
     solvedOrder++;
+
     $("answerFeedback").style.color="#65ffb7";
     $("answerFeedback").textContent="CORRECT! You're cracking the lab!";
-    $("answerReward").innerHTML=`DIGIT DISCOVERED<br><span class="reward-digit">${puzzles[current].digit}</span><br>Added to your secret code!`;
+    $("answerReward").innerHTML=
+      `DIGIT DISCOVERED<br><span class="reward-digit">${puzzles[current].digit}</span><br>Added to your secret code!`;
     $("answerReward").classList.add("show");
     $("answerForm").style.display="none";
+
     updateProgress();
     playSound("correct");
-
-    setTimeout(()=>{
-      $("equationOverlay").classList.remove("show");
-      if(puzzles.every(p=>p.solved))// All objects solved! Wait for the player to click the door.
-door.classList.add("ready");
-    },1500);
+    setTimeout(()=>$("equationOverlay").classList.remove("show"),1500);
   }else{
     $("answerFeedback").style.color="#ff91a5";
     $("answerFeedback").textContent="NOT QUITE! Try again — you've got this.";
-    $("answerInput").select();
+    input.select();
+    input.focus();
     playSound("wrong");
+  }
+}
+
+// Explicitly support button click, Enter, and native form submission.
+$("submitAnswerButton").addEventListener("click",submitAnswer);
+$("answerForm").addEventListener("submit",submitAnswer);
+$("answerInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+    e.preventDefault();
+    submitAnswer(e);
   }
 });
 
@@ -646,26 +998,26 @@ function renderSlots(){
 function renderKeypad(){
   const pad=$("keypad");
   pad.innerHTML="";
+
   ["1","2","3","4","5","6","7","8","9","CLEAR","0","ENTER"].forEach(key=>{
     const btn=document.createElement("button");
     btn.className="key"+(key==="CLEAR"?" clear":key==="ENTER"?" enter":"");
     btn.textContent=key;
+
     btn.addEventListener("click",()=>{
       if(key==="CLEAR"){
         enteredCode="";
         $("codeFeedback").textContent="";
       }else if(key==="ENTER"){
         const expected=puzzles.map(p=>String(p.digit)).join("");
+
         if(enteredCode===expected){
           $("keypadOverlay").classList.remove("show");
-          $("winOverlay").classList.add("show");
-          $("winChallenges").textContent=`${solvedOrder}/6 CHALLENGES`;
-          $("exitDoor").classList.add("open");
-          $("doorStatus").textContent="GATE OPEN";
-          $("doorHelp").innerHTML="MISSION COMPLETE!<br>YOU ESCAPED!";
-          $("missionStatus").textContent="ESCAPED!";
-          won=true;
-          playSound("win");
+          if(currentLevel===12){
+            runFinalCutscene();
+          }else{
+            showVictoryScreen();
+          }
         }else{
           $("codeFeedback").textContent="ACCESS DENIED! Check the revealed digits.";
           enteredCode="";
@@ -675,18 +1027,22 @@ function renderKeypad(){
         enteredCode+=key;
         $("codeFeedback").textContent="";
       }
+
       renderSlots();
     });
+
     pad.appendChild(btn);
   });
 }
 
 function tryExit(){
-  if(puzzles.every(p=>p.solved))openKeypad();
-  else{
+  if(puzzles.every(p=>p.solved)){
+    openKeypad();
+  }else{
     $("doorStatus").textContent="GATE LOCKED";
     $("doorHelp").innerHTML="You still need more digits!<br>Explore the objects.";
     playSound("wrong");
+
     setTimeout(()=>{
       if(!puzzles.every(p=>p.solved)){
         $("doorStatus").textContent="6 DIGITS REQUIRED";
@@ -696,20 +1052,61 @@ function tryExit(){
   }
 }
 
-function newGame(){
-  puzzles=objectData.map(()=>makePuzzle());
-  current=-1;enteredCode="";solvedOrder=0;won=false;
-  ["equationOverlay","keypadOverlay","winOverlay"].forEach(id=>$(id).classList.remove("show"));
+function startLevel(level){
+  currentLevel=level;
+  puzzles=objectData.map(()=>makePuzzle(currentLevel));
+  current=-1;
+  enteredCode="";
+  solvedOrder=0;
+  won=false;
+
+  clearCutsceneTimers();
+  $("finalCutscene").classList.remove("show","explode");
+  $("finalCutscene").setAttribute("aria-hidden","true");
+  ["equationOverlay","keypadOverlay","winOverlay"].forEach(id=>
+    $(id).classList.remove("show")
+  );
+
+  updateLevelDisplay();
   renderObjects();
   renderKeypad();
   updateProgress();
+
+  $("playAgain").textContent="Play next Level";
+}
+
+function newGame(){
+  // Restart always returns to Level 1.
+  startLevel(1);
+}
+
+function nextLevel(){
+  if(currentLevel<12){
+    startLevel(currentLevel+1);
+  }else{
+    newGame();
+  }
 }
 
 $("exitDoor").addEventListener("click",tryExit);
-$("closeEquation").addEventListener("click",()=>$("equationOverlay").classList.remove("show"));
-$("closeKeypad").addEventListener("click",()=>$("keypadOverlay").classList.remove("show"));
+
+$("closeEquation").addEventListener("click",()=>
+  $("equationOverlay").classList.remove("show")
+);
+
+$("closeKeypad").addEventListener("click",()=>
+  $("keypadOverlay").classList.remove("show")
+);
+
 $("newGame").addEventListener("click",newGame);
-$("playAgain").addEventListener("click",newGame);
+
+$("playAgain").addEventListener("click",()=>{
+  if(won&&currentLevel<12){
+    nextLevel();
+  }else{
+    newGame();
+  }
+});
 
 ["equationOverlay","keypadOverlay"].forEach(id=>{
   $(id).addEventListener("click",e=>{
