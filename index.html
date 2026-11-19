@@ -7,6 +7,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta name="theme-color" content="#10182a">
   <title>Bernat Pedro</title>
+  <link rel="stylesheet" href="santas-factory.css">
   <style>
     :root {
       color-scheme: dark;
@@ -26,30 +27,8 @@
       min-height: 100vh;
       overflow-x: hidden;
       color: var(--ink);
-      background: #080b14;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       -webkit-font-smoothing: antialiased;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background:
-        radial-gradient(ellipse at 78% 12%, rgba(68, 96, 173, .32), transparent 34%),
-        radial-gradient(ellipse at 8% 52%, rgba(44, 91, 128, .15), transparent 36%),
-        linear-gradient(155deg, #10182a 0%, #090d18 49%, #080b14 100%);
-    }
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      opacity: .18;
-      background-image: radial-gradient(rgba(218, 228, 255, .72) .7px, transparent .7px);
-      background-size: 34px 34px;
-      mask-image: linear-gradient(to bottom, #000, transparent 78%);
     }
     a { color: inherit; }
     a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
@@ -106,6 +85,7 @@
     .hero { width: 100%; }
     .eyebrow {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       gap: 10px;
       margin: 0 0 24px;
@@ -115,7 +95,10 @@
       letter-spacing: .16em;
       text-transform: uppercase;
     }
-    .eyebrow::before { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 16px rgba(197, 243, 107, .65); content: ""; }
+    .eyebrow-label { display: inline-flex; align-items: center; gap: 10px; }
+    .eyebrow-label::before { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 16px rgba(197, 243, 107, .65); content: ""; }
+    .eyebrow .button { flex: none; min-height: 36px; letter-spacing: 0; text-transform: none; }
+    @media (max-width: 520px) { .eyebrow { flex-wrap: nowrap; gap: 8px; letter-spacing: .06em; } }
     h1 {
       max-width: 760px;
       margin: 0;
@@ -126,7 +109,7 @@
     }
     h1 span { color: var(--accent); }
     .intro { max-width: 510px; margin: 26px 0 32px; color: var(--muted); font-size: clamp(1rem, 1.7vw, 1.12rem); line-height: 1.8; }
-    .links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .links { display: flex; flex-wrap: wrap; gap: 20px 10px; }
     .button {
       display: inline-flex;
       min-height: 46px;
@@ -266,6 +249,8 @@
     @media (max-width: 520px) { .shell { width: min(100% - 32px, 1120px); } header { padding: 16px 0; } .brand-mark { width: 35px; height: 35px; } nav { gap: 1px; } nav a { padding: 8px 9px; font-size: .76rem; } main { padding: 58px 0 54px; } .eyebrow { margin-bottom: 19px; } h1 { font-size: clamp(3.65rem, 16vw, 5.2rem); } .intro { margin: 22px 0 27px; } .links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .button { min-height: 45px; gap: 7px; padding: 0 10px; font-size: .78rem; } .feature { margin-top: 30px; padding: 18px; } .update-timer { padding: 21px; } .math-games { align-items: flex-start; flex-direction: column; gap: 21px; margin-bottom: 48px; } .math-games .button { width: 100%; } footer { font-size: .72rem; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
   </style>
+  <link rel="stylesheet" href="index-background-pre-christmas.css">
+  <link rel="stylesheet" href="index-background-christmas.css">
 </head>
 <body>
   <div class="halloween-scene" aria-hidden="true" hidden>
@@ -338,7 +323,10 @@
     <main>
       <div class="home-layout">
         <section class="hero" aria-labelledby="welcome">
-          <p class="eyebrow">Personal website</p>
+          <p class="eyebrow">
+            <span class="eyebrow-label">Holiday's Best Web</span>
+            <a class="button" href="christmas-countdown-troll.html">Check the Countdown</a>
+          </p>
           <h1 id="welcome">Hello, I’m<br><span>Bernat.</span></h1>
           <p class="intro">A small corner of the web for projects, experiments, and things worth sharing.</p>
           <div class="links">
@@ -346,7 +334,13 @@
             <a class="button" href="pro_career_football_game_fixed%20(2).html">FutCareer <span aria-hidden="true">↗</span></a>
             <a class="button" href="parking_lot_manager_v2%20(12).html">LotPilot <span aria-hidden="true">↗</span></a>
             <a class="button" href="airplane.html">Airplane Logger <span aria-hidden="true">↗</span></a>
-            <a class="button" href="flight-tycoon.html">Play Flight Tycoon <span aria-hidden="true">↗</span></a>
+            <div class="game-pair">
+              <a class="button" href="flight-tycoon.html">Play Flight Tycoon <span aria-hidden="true">↗</span></a>
+              <a class="button factory-link" href="santas-factory-test.html">
+                Santa's Factory <span aria-hidden="true">↗</span>
+                <span class="factory-badge">LIMITED TIME!</span>
+              </a>
+            </div>
           </div>
           <a class="feature" id="featured" href="phone-repair-simulator.html">
             <span><small>Featured project</small><strong>Phone Repair Simulator</strong></span>

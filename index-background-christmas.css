@@ -1,0 +1,53 @@
+:root {
+  --ink: #fff6e8;
+  --muted: #c3d6c9;
+  --line: #e6d3ac38;
+  --accent: #ffce82;
+}
+
+body {
+  background: linear-gradient(155deg, #1d4437, #102d26 52%, #0c201c) fixed;
+}
+
+body::before {
+  background: url("christmas-workshop-background.svg") center bottom / clamp(550px, 100vw, 1280px) auto no-repeat;
+  opacity: .55;
+  pointer-events: none;
+}
+
+body::after {
+  background-image: radial-gradient(#fff4d8 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+.hero h1 { text-shadow: 0 3px 24px #0a211c; }
+.eyebrow-label::before { box-shadow: 0 0 16px #ffce8299; }
+.brand-mark { border-color: var(--line); background: #ffce821a; }
+.button { color: var(--ink); background: #132d27e8; }
+.button:hover, .button:focus-visible { border-color: var(--accent); background: #23463b; }
+.button.primary,
+.button.primary:hover,
+.button.primary:focus-visible {
+  color: #fff6e8;
+  border-color: #e89184;
+  background: #a03938;
+  box-shadow: none;
+}
+.button.primary:hover, .button.primary:focus-visible { background: #b44945; }
+.feature, .update-timer, .math-games {
+  border-color: var(--line);
+  background: linear-gradient(120deg, #22463bf5, #122e27f5);
+}
+.feature:hover, .feature:focus-visible { border-color: var(--accent); background: #26493d; }
+.feature::before, .update-timer::before { background: #efbd721a; }
+.timer-icon { color: var(--accent); background: #ffce821a; }
+.timer-note, .countdown-label, footer { color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { background-image: url("christmas-workshop-background.svg#still"); }
+}
+
+@media (max-width: 520px) {
+  .links .game-pair { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-layout { row-gap: 150px; }
+}

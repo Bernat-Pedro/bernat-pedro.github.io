@@ -1,0 +1,26 @@
+body {
+  background: #080b14;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(ellipse at 78% 12%, rgba(68, 96, 173, .32), transparent 34%),
+    radial-gradient(ellipse at 8% 52%, rgba(44, 91, 128, .15), transparent 36%),
+    linear-gradient(155deg, #10182a 0%, #090d18 49%, #080b14 100%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .18;
+  background-image: radial-gradient(rgba(218, 228, 255, .72) .7px, transparent .7px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(to bottom, #000, transparent 78%);
+}

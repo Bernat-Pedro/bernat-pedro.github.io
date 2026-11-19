@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Traveling to Santa's Factory</title>
+  <link rel="icon" href="favicon-christmas-gift.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="santas-factory.css">
+  <style>
+    :root {
+      color-scheme: dark;
+      --wall: #173a33;
+      --pine: #0c2622;
+      --cream: #fff3da;
+      --gold: #efbd72;
+    }
+    body {
+      display: grid;
+      grid-template-rows: minmax(230px, 1fr) auto;
+      min-height: 100svh;
+      margin: 0;
+      color: var(--cream);
+      background:
+        repeating-linear-gradient(90deg, transparent 0 71px, #081f1a42 72px 74px),
+        radial-gradient(ellipse at 50% 18%, #31574a, var(--wall) 45%, var(--pine) 82%);
+      font: 1rem Georgia, 'Times New Roman', serif;
+    }
+    main { align-self: center; padding: 32px 18px 16px; text-align: center; }
+    h1 { margin: 0 0 18px; font-size: 3.75rem; line-height: 1.05; }
+    .factory-link { display: inline-block; padding: 5px 8px; }
+    .factory-badge { font-family: system-ui, sans-serif; }
+    .travel-timer { margin: 0 0 18px; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+    .home-link { color: var(--gold); text-underline-offset: .25em; }
+    .home-link:focus-visible { outline: 2px solid currentColor; outline-offset: 5px; }
+    .workshop {
+      position: relative;
+      min-height: clamp(220px, 43vw, 535px);
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .workshop svg {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      display: block;
+      width: max(100%, 500px);
+      max-width: 1280px;
+      height: auto;
+      opacity: .8;
+      transform: translateX(-50%);
+    }
+    .belt-treads { animation: belt-roll 2s linear infinite; }
+    .belt-gifts { animation: gift-travel 8s linear infinite; }
+    .workshop-arm { transform-box: view-box; }
+    .builder-arm { transform-origin: 12px -34px; animation: hammer 1.2s ease-in-out infinite alternate; }
+    .packer-arm { transform-origin: 12px -34px; animation: pack 1.8s ease-in-out infinite alternate; }
+    .sorter-arm { transform-origin: 12px -34px; animation: sort 2.4s ease-in-out infinite alternate; }
+    .tree-lights { animation: twinkle 2.4s ease-in-out infinite alternate; }
+    @keyframes belt-roll { to { transform: translateX(44px); } }
+    @keyframes gift-travel { to { transform: translateX(176px); } }
+    @keyframes hammer { from { transform: rotate(-32deg); } to { transform: rotate(12deg); } }
+    @keyframes pack { from { transform: rotate(-18deg); } to { transform: rotate(32deg); } }
+    @keyframes sort { from { transform: rotate(-22deg); } to { transform: rotate(20deg); } }
+    @keyframes twinkle { to { opacity: .45; } }
+    @media (max-width: 520px) {
+      h1 { font-size: 2.3rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .belt-treads, .belt-gifts, .workshop-arm, .tree-lights { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Traveling to Santa's Factory</h1>
+    <p class="travel-timer" id="travel-timer" role="timer" hidden>Arriving in <span>10</span>s</p>
+    <noscript><p><a class="home-link" href="christmas-game.html">Enter Santa's Factory</a></p></noscript>
+    <a class="home-link" href="index.html">Back to home</a>
+    <script>
+      const travelTimer = document.getElementById('travel-timer');
+      const travelSeconds = travelTimer.querySelector('span');
+      const arrival = performance.now() + 10000;
+
+      function updateTravelTimer() {
+        const remaining = arrival - performance.now();
+        if (remaining <= 0) {
+          window.location.replace('christmas-game.html');
+          return;
+        }
+        const seconds = Math.ceil(remaining / 1000);
+        travelSeconds.textContent = seconds;
+        window.setTimeout(updateTravelTimer, remaining - (seconds - 1) * 1000);
+      }
+
+      travelTimer.hidden = false;
+      updateTravelTimer();
+    </script>
+  </main>
+  <div class="workshop" aria-hidden="true">
+    <svg viewBox="0 0 960 420" focusable="false" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="treads" width="44" height="30" patternUnits="userSpaceOnUse">
+          <path d="M0 29 18 1M22 29 40 1" stroke="#e7c194" stroke-opacity=".32" stroke-width="3"/>
+        </pattern>
+        <clipPath id="belt-clip"><rect x="84" y="320" width="792" height="28" rx="14"/></clipPath>
+        <clipPath id="gifts-clip"><rect x="85" y="270" width="790" height="54"/></clipPath>
+        <g id="elf">
+          <path d="M-24 0v-24q0-15 17-17h14q17 2 17 17V0Z" fill="currentColor"/>
+          <path d="m-12-40 12 13 12-13M0-28v25" fill="none" stroke="#edca8e" stroke-width="3"/>
+          <path d="M-15-62l-16-6 10 17 8-1m28-10 16-6-10 17-8-1" fill="var(--skin, #eab27f)"/>
+          <circle cy="-58" r="18" fill="var(--skin, #eab27f)"/>
+          <path d="M-18-66q-2-26 20-30 11-2 23 12L9-87l10 19Z" fill="currentColor"/>
+          <path d="M-20-67h40" stroke="#f3d9a9" stroke-linecap="round" stroke-width="5"/>
+          <circle cx="25" cy="-84" r="4" fill="#f3d9a9"/>
+          <path d="M-6-58h.1m12 0h.1m-10 6q4 4 8 0" fill="none" stroke="#572c28" stroke-linecap="round" stroke-width="2"/>
+        </g>
+        <g id="parcel">
+          <rect y="-23" width="40" height="23" rx="3" fill="currentColor"/>
+          <path d="M0-19h40M20-23v23m0-23c-17 0-13-13 0 0 13-13 17 0 0 0Z" fill="none" stroke="#f4d18e" stroke-linejoin="round" stroke-width="3"/>
+        </g>
+        <g id="tree">
+          <path d="M-7 0v-26H7V0" fill="#96684a"/>
+          <path d="m0-122-27 47h12l-27 33h16l-25 24H51L26-42h16L15-75h12Z" fill="#417458"/>
+          <path d="m0-137 3 8 9 1-7 6 2 9-7-5-7 5 2-9-7-6 9-1Z" fill="#f4d18e"/>
+          <g class="tree-lights" fill="#f4d18e"><circle cx="-10" cy="-87" r="3"/><circle cx="10" cy="-68" r="3"/><circle cx="-24" cy="-51" r="3"/><circle cx="20" cy="-32" r="3"/></g>
+          <g fill="#d96c61"><circle cx="15" cy="-50" r="4"/><circle cx="-12" cy="-30" r="4"/><circle cx="-2" cy="-66" r="4"/></g>
+        </g>
+      </defs>
+
+      <path d="M0 70Q160 146 320 70q160 76 320 0 160 76 320 0" fill="none" stroke="#95a87a" stroke-opacity=".65" stroke-width="5"/>
+      <g class="tree-lights" fill="#ffc77d">
+        <circle cx="45" cy="90" r="4"/><circle cx="100" cy="104" r="4"/><circle cx="160" cy="109" r="4"/><circle cx="220" cy="104" r="4"/><circle cx="275" cy="90" r="4"/>
+        <circle cx="365" cy="90" r="4"/><circle cx="420" cy="104" r="4"/><circle cx="480" cy="109" r="4"/><circle cx="540" cy="104" r="4"/><circle cx="595" cy="90" r="4"/>
+        <circle cx="685" cy="90" r="4"/><circle cx="740" cy="104" r="4"/><circle cx="800" cy="109" r="4"/><circle cx="860" cy="104" r="4"/><circle cx="915" cy="90" r="4"/>
+      </g>
+      <g fill="#264455" stroke="#849485" stroke-width="4">
+        <path d="M205 236v-60a32 32 0 0 1 64 0v60Z"/>
+        <path d="M448 224v-60a32 32 0 0 1 64 0v60Z"/>
+        <path d="M691 236v-60a32 32 0 0 1 64 0v60Z"/>
+        <path d="M237 145v91m-32-53h64m211-50v91m-32-53h64m211-26v91m-32-53h64" fill="none"/>
+      </g>
+      <path d="M0 329h960v91H0Z" fill="#152a25"/>
+      <path d="M0 381h960m-960 26h960" stroke="#779077" stroke-opacity=".26"/>
+      <use href="#tree" x="140" y="330"/>
+      <use href="#tree" x="820" y="330"/>
+
+      <g transform="translate(295 286)" color="#b44d4e">
+        <use href="#elf"/>
+        <path d="M-14-31l-11 13-13 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="12"/>
+        <g class="workshop-arm builder-arm">
+          <path d="M12-34l17 12 18-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="12"/>
+          <path d="m46-24 10-26" stroke="#c58f64" stroke-linecap="round" stroke-width="5"/>
+          <path d="m46-52 17 6" stroke="#e1c8b3" stroke-linecap="round" stroke-width="10"/>
+          <circle cx="46" cy="-24" r="5" fill="#eab27f"/>
+        </g>
+        <path d="M30 0v-13h12v-8h14v8h9V0Z" fill="#e6b76c"/>
+        <circle cx="39" cy="-1" r="4" fill="#633e3b"/><circle cx="57" cy="-1" r="4" fill="#633e3b"/>
+        <path d="M-54 9h120v22H-54Z" fill="#62463f"/><path d="M-58 5H70" stroke="#b67a5f" stroke-linecap="round" stroke-width="9"/>
+      </g>
+      <g transform="translate(480 286)" color="#688d59" style="--skin: #bd805c">
+        <use href="#elf"/>
+        <path d="M-14-31l-13 14-13 3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="12"/>
+        <g class="workshop-arm packer-arm">
+          <path d="M12-34l18 13 10-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="12"/>
+          <path d="M39-26q17-13 22-5t-10 17" fill="none" stroke="#f0c77e" stroke-width="3"/>
+          <circle cx="40" cy="-27" r="5" fill="#bd805c"/>
+        </g>
+        <path d="M34-14h28v18H34Z" fill="#cb6460"/><path d="m34-14-7-8h26l9 8m-14 0V4" fill="none" stroke="#f0c77e" stroke-linejoin="round" stroke-width="3"/>
+        <path d="M-54 9h120v22H-54Z" fill="#62463f"/><path d="M-58 5H70" stroke="#b67a5f" stroke-linecap="round" stroke-width="9"/>
+      </g>
+      <g transform="translate(665 286)" color="#588586" style="--skin: #f0c397">
+        <use href="#elf"/>
+        <path d="M-14-31l-14 9-10-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="12"/>
+        <rect x="-54" y="-37" width="21" height="29" rx="2" fill="#e7c490" transform="rotate(-10 -44 -23)"/>
+        <path d="m-49-25 9-2m-8 7 9-2m-8 7 9-2" stroke="#876650" stroke-width="2"/>
+        <g class="workshop-arm sorter-arm">
+          <path d="M12-34l16 16 15-6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="12"/>
+          <path d="m41-24 11-9 10 8-7 10Z" fill="#e7c490"/><circle cx="54" cy="-26" r="2" fill="#86644c"/>
+          <circle cx="43" cy="-24" r="5" fill="#f0c397"/>
+        </g>
+        <path d="M32 2v-14h31V2Z" fill="#83996e"/><path d="M35-8h25" stroke="#cfba90" stroke-width="3"/>
+        <path d="M-54 9h120v22H-54Z" fill="#62463f"/><path d="M-58 5H70" stroke="#b67a5f" stroke-linecap="round" stroke-width="9"/>
+      </g>
+
+      <path d="M125 347v35m710-35v35M286 347v35m388-35v35M480 347v35" stroke="#ad785e" stroke-width="10"/>
+      <rect x="82" y="318" width="796" height="32" rx="16" fill="#493838" stroke="#bd896a" stroke-width="4"/>
+      <g clip-path="url(#belt-clip)"><rect class="belt-treads" x="35" y="320" width="850" height="28" fill="url(#treads)"/></g>
+      <g clip-path="url(#gifts-clip)">
+        <g class="belt-gifts">
+          <use href="#parcel" x="-72" y="321" color="#c35e58"/><use href="#parcel" x="20" y="321" color="#749b83"/>
+          <use href="#parcel" x="104" y="321" color="#c35e58"/><use href="#parcel" x="196" y="321" color="#749b83"/>
+          <use href="#parcel" x="280" y="321" color="#c35e58"/><use href="#parcel" x="372" y="321" color="#749b83"/>
+          <use href="#parcel" x="456" y="321" color="#c35e58"/><use href="#parcel" x="548" y="321" color="#749b83"/>
+          <use href="#parcel" x="632" y="321" color="#c35e58"/><use href="#parcel" x="724" y="321" color="#749b83"/>
+          <use href="#parcel" x="808" y="321" color="#c35e58"/><use href="#parcel" x="900" y="321" color="#749b83"/>
+        </g>
+      </g>
+      <path d="M0 393h960v27H0Z" fill="#10251f" fill-opacity=".55"/>
+    </svg>
+  </div>
+</body>
+</html>

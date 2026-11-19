@@ -1,0 +1,393 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Christmas Surprise 🎄</title>
+<link rel="icon" href="favicon-christmas-countdown.svg" type="image/svg+xml">
+<meta name="theme-color" content="#102e23">
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    font-family: Arial, sans-serif;
+    color: #fff4e5;
+    background:
+        radial-gradient(ellipse at 12% 0%, #72363f 0, transparent 44%),
+        linear-gradient(145deg, #102e23, #1d5038 55%, #091d18);
+}
+
+.snow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(white 2px, transparent 2px),
+        radial-gradient(white 1px, transparent 1px);
+    background-size: 60px 60px, 100px 100px;
+    animation: snow 15s linear infinite;
+    opacity: 0.2;
+}
+
+@keyframes snow {
+    from { transform: translateY(-100px); }
+    to { transform: translateY(100px); }
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    padding: clamp(20px, 5vw, 40px);
+    text-align: center;
+    background: #102e23d9;
+    border: 1px solid #dcb77b75;
+    border-radius: 25px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    z-index: 2;
+    margin: auto;
+}
+
+h1 {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    line-height: 1.2;
+    color: #ffda98;
+}
+
+p {
+    line-height: 1.6;
+}
+
+.countdown {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.time-box {
+    background: #752c39;
+    border: 1px solid #da8e82;
+    border-radius: 18px;
+    padding: 18px 12px;
+    min-width: 85px;
+}
+
+.time-box span {
+    display: block;
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    font-weight: bold;
+}
+
+.time-box label {
+    color: #ffe0aa;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #c8e8d1;
+    font-size: 1.1rem;
+}
+
+.footer {
+    margin-top: 25px;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+}
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+    animation: fade 0.7s ease;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.gift {
+    font-size: clamp(100px, 25vw, 150px);
+    cursor: pointer;
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    50% { transform: translateY(-12px); }
+}
+
+button {
+    border: none;
+    border-radius: 50px;
+    padding: 16px 35px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 12px;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.06);
+}
+
+.open-button {
+    background: #dc2626;
+    color: white;
+}
+
+.qr {
+    display: block;
+    width: min(280px, 80vw);
+    height: auto;
+    margin: 20px auto;
+    background: white;
+    padding: 12px;
+    border-radius: 15px;
+}
+
+.scan {
+    color: #facc15;
+    font-size: clamp(2rem, 8vw, 3rem);
+    font-weight: 900;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    to { transform: scale(1.05); }
+}
+
+.rick-link {
+    display: inline-block;
+    margin: 10px;
+    color: #a7f3d0;
+    overflow-wrap: anywhere;
+}
+
+.confetti {
+    position: fixed;
+    top: -30px;
+    font-size: 25px;
+    animation: fall 4s linear forwards;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="snow"></div>
+
+<div class="container">
+
+    <!-- COUNTDOWN -->
+
+    <div id="countdownScreen" class="screen active">
+
+        <h1>🎄 Christmas Countdown 🎄</h1>
+
+        <div class="subtitle">
+            Something special is waiting for you...
+        </div>
+
+        <div class="countdown">
+
+            <div class="time-box">
+                <span id="days">00</span>
+                <label>Days</label>
+            </div>
+
+            <div class="time-box">
+                <span id="hours">00</span>
+                <label>Hours</label>
+            </div>
+
+            <div class="time-box">
+                <span id="minutes">00</span>
+                <label>Minutes</label>
+            </div>
+
+            <div class="time-box">
+                <span id="seconds">00</span>
+                <label>Seconds</label>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            December 24 · 5:00 PM · Spain 🇪🇸
+        </div>
+
+    </div>
+
+
+    <!-- CHRISTMAS GIFT -->
+
+    <div id="giftScreen" class="screen">
+
+        <h1>🎄 IT'S TIME! 🎄</h1>
+
+        <p>Your Christmas surprise is ready!</p>
+
+        <div class="gift" id="gift">🎁</div>
+
+        <button class="open-button" id="openButton">
+            OPEN!
+        </button>
+
+    </div>
+
+
+    <!-- SURPRISE -->
+
+    <div id="qrScreen" class="screen">
+
+        <h1>🎅 SURPRISE! 🎅</h1>
+
+        <div class="scan">SCAN NOW!</div>
+
+        <img
+            class="qr"
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAFIAQAAAAAab1qeAAACFElEQVR4nO2ay46DMAxFzx3x/798Z2E70FmVSpSEcTct5UgxV45fQebNz8+7YJNNNtnkvyA3AMVvyyi/DMQlgC9a/XnkBoReCAsYWuL9zkWrP5aUBGCM80IhY96ZxM7pye14ER5qRLnoxas/n3SKqFtWX59M/yxXVCSjcFTh/c4yTzSDnuWNFqGpjBWaXrn688gNDj6IZcBCET4PIXSVJ5qAzHQuxla3QbIkqeuls6SzincVn5nhwR41/QR2rkIqNjjCRookX5k+Y8AMdq5CGsDGqamwlCrjdNUJ7FyFVPTqPhSddtRLouPnGTKbdVHjENcYJASt2cjddi5FRtmumn2EmuGZrinJDHauQqrCJuAh6BC5/fPsfic3PDX5BMBy+Gfn99Ok2Vt2Ked21Nc8dq5BWsLKrojw2jED9Tx2LkL6dZKUPhkl0/h7AjsXIKteqpMjhbalY2Wm2+1cjMwZiLHsDKCR7o26Xvqg/lRGzvDNKD0l934/R9YhUYhY7VDWS1FIRQRY5onuJev8fQROj/Zo9Ep0/fk2+XKIuXeXHqlI7v79fH8EZFKC0SUx0v39dq5F2rbB2cPr2MVXOJ3BzvnJPC/WGH5kdh9/j4iwyhNNRDoLpJzTK4481POQj0lHL18v3VRJ/6XVH0C+vh9ihFLQdNFLV38e+ZrfS7/9KCmOP7qef/fz5yW6L6/eZJNNNrku+QvIwOyYq9ZHuAAAAABJRU5ErkJggg=="
+            alt="Christmas QR Code"
+        >
+
+        <p>📱 Scan the QR code!</p>
+
+        <p>
+            If scanning doesn't work, click here:
+        </p>
+
+        <a
+            class="rick-link"
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            🎵 Open the surprise 🎵
+        </a>
+
+        <h2>🎄🎁🎄</h2>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const targetDate = new Date("2026-12-24T17:00:00+01:00");
+
+const countdownScreen = document.getElementById("countdownScreen");
+const giftScreen = document.getElementById("giftScreen");
+const qrScreen = document.getElementById("qrScreen");
+
+function showScreen(screen) {
+
+    countdownScreen.classList.remove("active");
+    giftScreen.classList.remove("active");
+    qrScreen.classList.remove("active");
+
+    screen.classList.add("active");
+
+}
+
+function confetti() {
+
+    const emojis = ["🎄", "🎁", "❄️", "⭐", "🎅", "🔔"];
+
+    for (let i = 0; i < 45; i++) {
+
+        const particle = document.createElement("div");
+
+        particle.className = "confetti";
+        particle.textContent =
+            emojis[Math.floor(Math.random() * emojis.length)];
+
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.animationDuration =
+            (2 + Math.random() * 3) + "s";
+
+        document.body.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 5000);
+
+    }
+
+}
+
+function openGift() {
+
+    showScreen(qrScreen);
+    confetti();
+
+}
+
+document.getElementById("openButton").addEventListener("click", openGift);
+document.getElementById("gift").addEventListener("click", openGift);
+
+function updateCountdown() {
+
+    const difference = targetDate.getTime() - Date.now();
+
+    if (difference <= 0) {
+
+        showScreen(giftScreen);
+        confetti();
+
+        clearInterval(timer);
+        return;
+
+    }
+
+    const days = Math.floor(difference / 86400000);
+    const hours = Math.floor((difference / 3600000) % 24);
+    const minutes = Math.floor((difference / 60000) % 60);
+    const seconds = Math.floor((difference / 1000) % 60);
+
+    document.getElementById("days").textContent = days;
+    document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+    document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+    document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+
+}
+
+updateCountdown();
+
+const timer = setInterval(updateCountdown, 1000);
+
+</script>
+
+</body>
+</html>
